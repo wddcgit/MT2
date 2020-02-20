@@ -11,6 +11,8 @@ type
     cmpImageList: TAdvSmoothSlideShow;
     procedure ListLogImages(LogID : integer);
     procedure FormShow(Sender: TObject);
+    procedure cmpImageListKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -26,8 +28,29 @@ implementation
 
 {$R *.dfm}
 
-uses uMT2GlobalVar;
+uses uMT2GlobalVar, duMT2;
 
+
+procedure TfrmImageList.cmpImageListKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+
+   var
+  iIndex : integer;
+  sFileName : String;
+begin
+ if (Key = VK_DELETE) and (cmpImageList.ItemIndex > -1) then
+      begin
+        iIndex := cmpImageList.ItemIndex;
+        sFileName:= cmpImageList.Items[iIndex].Location;
+        if MessageDlg('Delete file ' + sFileName + '?',mtConfirmation,[mbYes,mbNo],0) = mrYes then
+            begin
+              DeleteFile(sFileName);
+
+              cmpImageList.Items.Delete(iIndex);
+            end;
+
+      end;
+end;
 
 procedure TfrmImageList.FormShow(Sender: TObject);
 begin

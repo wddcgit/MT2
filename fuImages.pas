@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ClipBrd, Vcl.ExtCtrls, Vcl.ComCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ClipBrd, Vcl.ExtCtrls, Vcl.ComCtrls,  JPEG,
   Vcl.StdCtrls, AdvEdit, HTMLText, AdvGlowButton;
 
 type
@@ -15,14 +15,14 @@ type
     eImageTitle: TAdvEdit;
     eImageNotes: TAdvEdit;
     lblHowToAddImage: THTMLStaticText;
-    AdvGlowButton1: TAdvGlowButton;
-    AdvGlowButton2: TAdvGlowButton;
+    btnSelectImage: TAdvGlowButton;
+    btnClear: TAdvGlowButton;
     btnSaveImage: TAdvGlowButton;
     odSelectImage: TOpenDialog;
     procedure lvImageKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure AdvGlowButton1Click(Sender: TObject);
-    procedure AdvGlowButton2Click(Sender: TObject);
+    procedure btnSelectImageClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
     procedure SetComponentsAndButtonsStateToImage;
   private
     { Private declarations }
@@ -37,16 +37,30 @@ implementation
 
 {$R *.dfm}
 
-procedure TfrmImages.AdvGlowButton1Click(Sender: TObject);
+procedure TfrmImages.btnSelectImageClick(Sender: TObject);
+var
+  jpgIncoming : TJPEGImage;
+  sFileIn : String;
 begin
    if odSelectImage.Execute then
            begin
-             imgImport.Picture.LoadFromFile(odSelectImage.FileName);
+             sFileIn:= odSelectImage.FileName;
+             if (POS('.jpg',LowerCase(sFileIn)) > 0)  or (POS('.jpeg',LowerCase(sFileIn)) > 0)  then
+                try
+                   jpgIncoming:= TJPEGImage.Create;
+                   jpgIncoming.LoadFromFile(sFileIn);
+                   imgImport.Picture.Bitmap.Assign(jpgIncoming);
+
+                finally
+                  jpgIncoming.Free;
+                end
+             else
+                imgImport.Picture.LoadFromFile(odSelectImage.FileName);
              SetComponentsAndButtonsStateToImage;
         end;
 end;
 
-procedure TfrmImages.AdvGlowButton2Click(Sender: TObject);
+procedure TfrmImages.btnClearClick(Sender: TObject);
 begin
          lvImage.Visible:= true;
          lblHowToAddImage.Visible:= true;

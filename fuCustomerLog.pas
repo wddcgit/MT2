@@ -4,126 +4,115 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, HTMLabel, AdvEdit,
-  Vcl.Grids, AdvObj, BaseGrid, AdvGrid, DateUtils, W7Classes, W7Bars,
-  Vcl.ExtCtrls, AdvGlowButton, Vcl.ComCtrls, AdvCombo, ColCombo, uMT2Classes,
-  AdvOfficeButtons, Data.DB, MemDS, DBAccess, MSAccess, AdvUtil,
-  AdvSmoothListBox, Vcl.Menus, AdvMenus;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, HTMLabel, AdvEdit,  ShellAPI,
+  Vcl.Grids, AdvObj, BaseGrid, AdvGrid, DateUtils, W7Classes, W7Bars, ComObj, uADSI,
+  Vcl.ExtCtrls, AdvGlowButton, Vcl.ComCtrls, AdvCombo, ColCombo, uMT2Classes,  ActiveDS_TLB,
+  AdvOfficeButtons, Data.DB, MemDS, DBAccess, MSAccess, AdvUtil, GDIPPictureContainer,
+  AdvSmoothListBox, Vcl.Menus, AdvMenus, AdvSmoothTileList, Generics.Collections,
+  AdvSmoothTileListImageVisualizer, AdvSmoothTileListHTMLVisualizer,
+  AdvSmoothComboBox, GDIPCustomItem, GDIPTextItem, GDIPImageTextItem,
+  GDIPImageTextButtonItem, GDIPImageTextButtonSectionItem,  MAPI,
+  GDIPLargeButtonedItem, GDIPLargeButtonedHTMLItem, CustomItemsContainer,
+  AdvHorizontalPolyList;
 type
    TBeforeNewLogValidation = (vlSuccess,vlNoClientSelected);
 
 type
+   TSearchType = (stMember, stLogId);
+
+
+
+type
   TfrmCustomerLog = class(TForm)
-    eMember: TAdvEdit;
-    lblClient: THTMLabel;
-    sgLogs: TAdvStringGrid;
-    ibCLInfo: TW7InformationBar;
-    lblStatus: TLabel;
-    cbMember: TComboBox;
-    Label9: TLabel;
-    pnlLog: TPanel;
-    Label1: TLabel;
-    lblLogID: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
-    Panel2: TPanel;
-    Label2: TLabel;
-    Label3: TLabel;
-    lblPageCnt: TLabel;
-    lblLogDate: TLabel;
-    lblSaved: TLabel;
-    tmrSaved: TTimer;
-    lbLogs: TAdvSmoothListBox;
-    btnNewLog: TAdvGlowButton;
-    btnDeleteLog: TAdvGlowButton;
     pnlButtons: TPanel;
-    btnClearLog: TAdvGlowButton;
-    btnPrintLog: TAdvGlowButton;
-    btnPreview: TAdvGlowButton;
-    pnlLogInput: TPanel;
-    memDetail: TMemo;
-    btnAddNewOrUpdateEntry: TAdvGlowButton;
     tmrDeleteEntry: TTimer;
-    lblCaller: TLabel;
-    lblCategory: TLabel;
-    lblAssignedTo: TLabel;
-    Label4: TLabel;
-    lblSummary: TLabel;
-    lblJIRALink: THTMLabel;
     popImages: TAdvPopupMenu;
     miAddIMge: TMenuItem;
-    procedure eMemberChange(Sender: TObject);
+    AdvSmoothTileListHTMLVisualizer1: TAdvSmoothTileListHTMLVisualizer;
+    pnlTop: TPanel;
+    Label5: TLabel;
+    btnMemberSearch: TAdvGlowButton;
+    Panel1: TPanel;
+    lblClient: THTMLabel;
+    lbStatusesFilter: TListBox;
+    Label1: TLabel;
+    tmrByCategory: TTimer;
+    lbCategory: TAdvSmoothComboBox;
+    AdvSmoothTileListHTMLVisualizer2: TAdvSmoothTileListHTMLVisualizer;
+    AdvSmoothTileListImageVisualizer1: TAdvSmoothTileListImageVisualizer;
+    Panel2: TPanel;
+    tlLogs: TAdvSmoothTileList;
+    lblSummary: THTMLabel;
+    Label2: TLabel;
+    btnNewLog: TAdvGlowButton;
+    pnlAdmin: TPanel;
+    btnMTAlert: TAdvGlowButton;
+    tmrValidateADSI: TTimer;
+    btnMTSearch: TAdvGlowButton;
+    btnMTReports: TAdvGlowButton;
+    btnMTAdmin: TAdvGlowButton;
+    eSearch: TAdvEdit;
     procedure FormCreate(Sender: TObject);
-    procedure GetLogs;
-    procedure eMemberExit(Sender: TObject);
+    procedure GetLogs(LogID : integer);
     procedure FormShow(Sender: TObject);
-    procedure sgLogsGetColumnFilter(Sender: TObject; Column: Integer;
-      Filter: TStrings);
-    procedure sgLogsFilterSelect(Sender: TObject; Column, ItemIndex: Integer;
-      FriendlyName: string; var FilterCondition: string);
-    procedure sgLogsClickCell(Sender: TObject; ARow, ACol: Integer);
-    procedure ShowLogDetails(LogId, RowID : integer);
-    procedure sgLogsRowChanging(Sender: TObject; OldRow, NewRow: Integer;
-      var Allow: Boolean);
-    procedure ClearDetails;
-    procedure btnNewLogClick(Sender: TObject);
-    function GetNewLogId : integer;
-    procedure btnClearLogClick(Sender: TObject);
-    procedure eMemberKeyPress(Sender: TObject; var Key: Char);
-    procedure ClearGrid;
-    procedure btnDeleteLogClick(Sender: TObject);
-    function FindMember(SearchText : String; FromMemberBox : boolean) : boolean;
-    procedure cbMemberChange(Sender: TObject);
+    procedure OpenMemberSearchForm(Sender : TObject);
+    procedure FindMember(MemberSearch : String; LogID : integer);
     procedure FormDestroy(Sender: TObject);
-    procedure ClearLogPages;
-    procedure DisplayLogPage(LogPage : TLogPage);
-    procedure btnAddNewOrUpdateEntryClick(Sender: TObject);
-    function FindLogRow(LogID : String) : integer;
     procedure btnPrintLogClick(Sender: TObject);
     procedure btnPreviewClick(Sender: TObject);
-    function SaveLogPageToDB(LogPageIn : TLogPage) : integer;
-    procedure tmrSavedTimer(Sender: TObject);
-    function CreateOrUpdateLogSummaryInDB(DataSourceIn : TLogSummary)  : integer;
-    procedure AddToLogGrid(NewLogSummary : TLogSummary);
-    function BeforeNewLogValidation : TBeforeNewLogValidation;
-    procedure OpenNewLogForm;
-    procedure OpenChangeLogStatusForm(LogID : integer ; CurrentStatus : String);
     function UpdateLogStatus(LogID , NewStatus : integer; StatusChangedBy : String; StatusChangedDate : TDateTime ) : shortint;
     procedure sgLogsSelectCell(Sender: TObject; ACol, ARow: Integer;
       var CanSelect: Boolean);
-    procedure sgLogsDblClickCell(Sender: TObject; ARow, ACol: Integer);
-    procedure lbLogsItemDblClick(Sender: TObject; itemindex: Integer);
-    function DoesTheItemEditMemoContainText : boolean;
-    procedure SaveNewLogEntry;
-    procedure ChangeMemoStatusToEditing;
     procedure UpdateEntryinDB;
     procedure lbLogsGraphicRightClick(Sender: TObject; itemindex: Integer);
     procedure DeleteLogEntryFromDB(EntryID : integer);
     procedure UpDateEntry;
-    procedure UpdateEntryWindow;
-    procedure tmrDeleteEntryTimer(Sender: TObject);
-    procedure ShowUndoEntryWindow(EntryIndex : integer);
     procedure lbLogsItemDeleteClicked(Sender: TObject;
       Item: TAdvSmoothListBoxItem; var Allow: Boolean);
-    procedure SavePendingDeletedItemToTemporaryHolder(EntryIndex : integer);
-    procedure CancelPendingDeletion;
     procedure FreePendingEntryToBeDeletedClass;
-    procedure OpenEditLogForm;
-    procedure UpdateRowInLogGrid(RowIndex : integer);
-    procedure ClearLogSummaryGrid;
-    procedure ClearSummaryHeader;
-    procedure ShowLogHeader(LogSummaryIn : TLogSummary);
-    procedure OpenImageForm(Sender : TObject) ;
-    function AddImageToLog(LogID : integer; LogTitle,LogName : String) : String;
-    function ListImagesForLog(LogID : integer) : boolean;
-    procedure ShowImageListForm(LogID : integer);
-    procedure lbLogsFooterClick(Sender: TObject; X, Y: Integer);
+    procedure ADGGlowButton1Click(Sender: TObject);
+    procedure chkOnlyOpenClick(Sender: TObject);
+    function FormatPhone(PhoneIn : String) : String;
+    procedure DisplayMember;
+    procedure DisplayNoMemberFound;
+    procedure FillLogPanelDisplay(LogItem : TLogSummary);
+    procedure GetCategoryList;
+    procedure tmrByCategoryTimer(Sender: TObject);
+    procedure Label1Click(Sender: TObject);
+    procedure lbCategoryChange(Sender: TObject);
+    procedure lbCategoryItemSelected(Sender: TObject; itemindex: Integer);
+    procedure GetLogStatusCount(MemberNbr : String);
+    procedure lblClientAnchorClick(Sender: TObject; Anchor: string);
+    procedure btnNewLogClick(Sender: TObject);
+    procedure GetCallerListByClinic(MemberNbr : String);
+    procedure ListStatuses;
+    procedure GetDepartmentList;
+    procedure btnMTAdminClick(Sender: TObject);
+    function IsMemberOfMTAdminGroup : boolean;
+    procedure tmrValidateADSITimer(Sender: TObject);
+    procedure GetEMailGroup ;
+    procedure btnMTReportsClick(Sender: TObject);
+    procedure CheckForNewTickets;
+    procedure StartUpTasks;
+    procedure tlLogsDblClick(Sender: TObject);
+    procedure btnMTSearchClick(Sender: TObject);
+    procedure eSearchKeyPress(Sender: TObject; var Key: Char);
+    procedure DisplayAllLogs;
+    procedure GetAllOpenLogs;
+    procedure GetOpenTicketCount;
+    procedure FilterLogs(LogID : integer);
+    procedure CheckForWatches;
+    procedure btnMTAlertClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    function GetSearchStatus : smallint;
+    procedure tlLogsTileAnchorClick(Sender: TObject; Tile: TAdvSmoothTile;
+      State: TTileState; Anchor: string);
   private
     { Private declarations }
   public
     { Public declarations }
-    sCL_MemberNbr : String; //holds the selected memer num ber
-    sCL_MemberName : String;
+
     dCL_Start, dCL_End : TDateTime;
     bCL_UpdateLog : boolean;
     bCL_EditLog : boolean;
@@ -137,12 +126,16 @@ type
     iCL_EntryWindowIndexBeingEdited : integer;
     iCL_EntryWindowIndexBeingDeleted : integer;
     vCL_PendingEntryToBeDeleted : TLogPage;
-
+    iCL_PopUpProblemID : integer;
+    vCL_SelectedMember : TMember;
+    vCL_ADSI  : TADSI;
+    vCL_ADSIUser  : TADSIUserInfo;
   end;
 
 const
   cstLogStatusColumn = 5;
   cstLogIDColumn = 1;
+  cstDefaultTileListHeight = 110;
 
 
 var
@@ -153,140 +146,95 @@ implementation
 {$R *.dfm}
 
 uses duMT2, uMT2GlobalVar, fuDateSelection, fuCustomerInvoices, uCommon, fuBoL,
-  fuCreateNewLog, fuChangeLogStatus, fuImages, fuImageList;
+  fuCreateNewLog, fuChangeLogStatus, fuImages, fuEMail,
+  fuMemberSearch, fuMTAdmin, fuLDAP, fuLog, fuAlerts, fuMTSearch;
 
 
-procedure TfrmCustomerLog.eMemberChange(Sender: TObject);
+procedure TfrmCustomerLog.OpenMemberSearchForm(Sender : TObject);
+
 begin
-    FindMember(eMember.Text, false);
+
+   btnNewLog.Visible:= false;
+   With TfrmMemberSearch.Create(nil) do
+         try
+            Left:= ClientToScreen(Point(self.Left,self.Top)).X + btnMemberSearch.Left;
+            Top:= ClientToScreen(Point(self.Left,self.Top)).Y + btnMemberSearch.Top + btnMemberSearch.Height;
+            ShowDimForm(TCustomForm(Self));
+            ShowModal;
+            if ModalResult = mrOK then
+               FindMember(sMS_MemberNbr,0);
+         finally
+           begin
+            Free;
+            HideDimForm;
+           end;
+         end;
+
 end;
 
-function TfrmCustomerLog.FindMember(SearchText : String; FromMemberBox : boolean) : boolean;
-var
-  q1 : TMSQuery;
-  sPhone : String;
-  sFax : String;
+procedure TfrmCustomerLog.FindMember(MemberSearch: string; LogID : integer);
 begin
-   try
-   //first. while we are looking we want to clear the grid and details
+     if (MemberSearch = '') and (LogID > 0) then
+        MemberSearch:= dmMT2.GetCustNbrFromLogID(LogID);
 
-   if not bCL_Clear then
-      try
-        bCL_Clear:= true;
-        sgLogs.BeginUpdate;
-        ClearGrid;
-        ClearDetails;
-
-      finally
-        sgLogs.EndUpdate;
-      end;
-
-   lblClient.BeginUpdate;
-   lblClient.HTMLText.Text:= '';
-   if not FromMemberBox then
-      cbMember.Items.Clear;
-
-   if eMember.Text <> '' then
-    begin
-      if IsValidInt(Copy(SearchText,1,1)) then //searching by member nbr
-         q1:= dmMT2.qMembers
+     if MemberSearch <> '' then
+         begin
+           vCL_SelectedMember:= dmMT2.LoadMember(MemberSearch);
+           vCL_SelectedMember.Phone:= FormatPhone(vCL_SelectedMember.Phone);
+           vCL_SelectedMember.Fax:= FormatPhone(vCL_SelectedMember.Fax);
+           btnNewLog.Visible:= true;
+           DisplayMember;
+           GetLogStatusCount(vCL_SelectedMember.Nbr);
+           Application.ProcessMessages;
+           GetLogs(LogID);
+           GetCallerListByClinic(vCL_SelectedMember.Nbr);
+        end
       else
-         q1:= dmMT2.qDB_MemberName;
-
-      With q1 do
-      try
-        Active:= false;
-        ParamByName('cnbr').AsString:= SearchText + '%';
-
-        Active:= true;
-        if RecordCount > 0 then
-          begin
-             sCL_MemberName:= Fields[1].AsString;
-             sPhone:= Copy(Fields[6].AsString,1,10);
-             sFax:= Copy(Fields[8].AsString,1,10);
-             if Length(sPhone) = 10 then
-                begin
-                  System.Insert('(',sPhone,1);
-                  System.Insert(')',sPhone,5);
-                  System.Insert(' ',sPhone,9);
-                end;
-             if Length(sFax) = 10 then
-                begin
-                  System.Insert('(',sFax,1);
-                  System.Insert(')',sFax,5);
-                  System.Insert(' ',sFax,9);
-                end;
-             if not FromMemberbox and (cbMember.Items.IndexOf(FIelds[0].AsString) = -1) then
-                 cbMember.Items.Add(Fields[0].AsString);
-
-             lblClient.HTMLText.Clear;
-             lblClient.HTMLText.Add('<FONT size="10"><b>' + Fields[1].AsString + '</b></FONT><br>');
-             lblClient.HTMLText.Add(Fields[2].AsString + '<br>');
-             lblClient.HTMLText.Add(Fields[3].AsString + ', ' + Fields[4].AsString + ' ' + Fields[5].AsString + '<br><br>');
-             lblClient.HTMLText.Add('<Font size="9">Phone : <b>' + sPhone + '</b><IND x="140">Fax : <b>' + sFax + '</b></font>');
-
-             if Fields[7].AsString <> '' then
-                lblClient.HTMLText.Add('<br><A HREF="emal' + Fields[7].AsString + '">' + Fields[7].AsString + '</A>');
-             sCL_MemberNbr:= Fields[0].AsString;
-             // add all the other member numbers if there are some
-             if not FromMemberBox then
-                  while not EOF do
-                   begin
-                    if cbMember.Items.IndexOf(FIelds[0].AsString) = -1 then
-                       cbMember.Items.Add(FIelds[0].AsString);
-                    Next;
-                   end;
-             if not FromMemberBox then
-                 cbMember.ItemIndex:= 0;
-
-          end
-         else
-           sCL_MemberNbr:= '';
-      finally
-        Active:= false;
-      end;
-    end;
-   finally
-     lblClient.EndUpdate;
-   end;
-   if FromMemberBox then //immediately look up any logs
-      GetLogs;
-end;
-
-procedure TfrmCustomerLog.eMemberExit(Sender: TObject);
-begin
-  if sCL_MemberNbr <> '' then
-   begin
-      dCL_end:= Now; // since logs can occur anytime, this timestamp needs to be current unless using a date range
-      GetLogs;
-   end;
-end;
-
-procedure TfrmCustomerLog.eMemberKeyPress(Sender: TObject; var Key: Char);
-begin
-   if Key = #13 then
-       eMemberExit(eMember);
+        begin
+         DisplayNoMemberFound;
+         tlLogs.Clear;
+        end;
 end;
 
 procedure TfrmCustomerLog.FormCreate(Sender: TObject);
 begin
-    lblCLient.HTMLText.Text:= '';
-    sCL_MemberNbr:= '';
+    lblClient.HTMLText.Text:= '';
+
     //add a bitmap to the first colmun
-    dmMT2.iml16x16.GetBitmap(1,sgLogs.CreateBitmap(0,0,true,haRight,vaTop));
+
     dCL_Start:= IncYear(Now,-10);
     dCL_End:= Now;
-    lblStatus.Caption:= '';
-    lblLogId.Caption:= '';
 
-    lblLogDate.Caption:= '';
+    stlGV_ActiveCtgy:= TStringList.Create;
+    stlGV_ActiveCtgy.OwnsObjects:= true;
+    stlGV_AllCtgy:= TStringList.Create;
+    stlGV_AllCtgy.OwnsObjects:= true;
+
+    stlGV_CLDept:= TStringList.Create;
+    stlGV_DeptEmail:= TStringList.Create;
+
+
     stlCL_LogPages:= TStringList.Create;
     iCL_LogPageIdx:= -1;
     iCL_EntryIDBeingEdited:= 0;
     iCL_EntryWindowIndexBeingEdited:= -1;
     iCL_EntryWindowIndexBeingDeleted:= -1;
 
-    lbLogs.Items.Clear;
+
+
+    stlGv_Callers:= TStringList.Create;
+
+    tlLogs.Tiles.Clear;
+    tlLogs.AnimationFactor:= 0;
+    tlLogs.PageAnimationFactor:= 0;
+    lblSummary.HTMLText.Text:= '';
+
+    rGV_MTUser.UserName:= GetEnvironmentVariable('USERNAME');
+
+    vCL_ADSI:= TADSI.Create(Self);
+
+    lstGV_UnAckList:= TList<TMTNotification>.Create;
+    dtGV_LastUpdateCheck:= 0;
 
 
 end;
@@ -294,48 +242,138 @@ end;
 procedure TfrmCustomerLog.FormDestroy(Sender: TObject);
 begin
     stlCL_LogPages.Free;
+    stlGV_DeptEmail.Free;
+    vCL_ADSI.Free;
+end;
+
+procedure TfrmCustomerLog.FormResize(Sender: TObject);
+begin
+    try
+      tlLogs.BeginUpdate;
+      tlLogs.Rows:= Round(tlLogs.ClientHeight div cstDefaultTileListHeight);
+    finally
+      tlLogs.EndUpdate;
+    end;
 end;
 
 procedure TfrmCustomerLog.FormShow(Sender: TObject);
-var
-  i : integer;
+
 begin
-   Caption:= 'Customer Log - Staff : ' + sGV_EmpName;
-   ClearSummaryHeader;
+   GetCategoryList;
+
+   ListStatuses;
+
+   GetDepartmentList;
+
+   tmrValidateADSI.Enabled:= true;
+
+   StartupTasks;
+
+   if ParamCount > 1 then
+     try
+     FindMember('',StrToInt(ParamStr(1)))
+     except
+       DisplayAllLogs
+     end
+   else
+      DisplayAllLogs;
+
+
 
 end;
 
-procedure TfrmCustomerLog.GetLogs;
+procedure TfrmCustomerLog.GetLogs(LogID : integer);
 var
   x, y : integer;
   sCaller : String;
   vLog : TLogSummary;
+  LogPanel : TADVSmoothListBoxItem;
+  sSummary : String;
+  iStatusParam : integer;
+  sSumStatus : String;
+
+
+
+procedure SetQuery;
+begin
+
+     With dmMT2.fqLogs do
+        begin
+          SQL.Text:= UseDB;
+          SQL.Add('SELECT a.logid,a.caller,a.logdate,a.summary,');
+          SQL.Add('c.category,d.Department,a.assignedto,a.status,a.priority,a.duedate');
+          SQL.Add(' FROM dbo.tblCustomerLogInfo a');
+          SQL.Add('LEFT OUTER JOIN dbo.tblLogCategories c ON (a.ctgyid = c.categoryid)');
+          SQL.Add('LEFT OUTER JOIN dbo.tblDepartments d ON(a.deptid = d.DepartmentID)');
+          SQL.Add('WHERE a.customerid = :cnbr');
+          Params[0].AsString:= vCL_SelectedMember.Nbr;
+
+          if LogID > 0 then
+            begin
+             SQL.Add(' AND LogID=:lgid');
+             ParamByName('lgid').AsInteger:= LogID;
+            end
+          else
+            begin
+              if lbCategory.SelectedItemIndex > 0 then
+                 begin
+                   SQL.Add(' AND a.ctgyid = :ctgy');
+                   ParamByName('ctgy').AsInteger:= Integer(lbCategory.Items[lbCategory.selecteditemindex].ItemObject);
+                 end;
+              if lbStatusesFilter.ItemIndex > 0 then
+                 begin
+                    SQL.Add(' AND a.status = :stas');
+                    iStatusParam:= lbStatusesFilter.ItemIndex -1;
+                    ParamByName('stas').AsInteger:= iStatusParam;
+                 end;
+
+               SQL.Add('ORDER BY a.logdate DESC');
+            end;
+
+        end;
+end;
 begin
     ///get the log for the customer
     ///
     ///
-    lbLogs.Items.Clear;
-    With sgLogs do
+
+    With tlLogs do
       try
         bCL_Clear:= false;
         bCL_UpdateLog:= True;
         BeginUpdate;
-        ClearLogSummaryGrid;
 
+        Tiles.Clear;
+        lblSummary.HTMLText.Text:= '';
         x:= 1;
-        With dmMT2.qMT_Logs do
+        With dmMT2.fqLogs do
            try
              Active:= false;
-             ParamByName('cnbr').AsString:= sCL_MemberNbr;
-             ParamByName('stdt').AsDateTime:= dCL_Start;
-             ParamByName('endt').AsDateTime:= dCL_End;
+             SetQuery;
              DisableControls;
              Active:= true;
-             lblStatus.Caption:= IntTOStr(RecordCount) + ' records found';
+             case lbStatusesFilter.ItemIndex of
+             5: sSumStatus:= 'Complete';
+             4: sSumStatus:= 'Waiting on Client';
+             3: sSumStatus:= 'On Hold';
+             2: sSumStatus:= 'In Progress';
+             1: sSumStatus:= 'New';
+             else
+                sSumStatus:= ''; //this would be all tickets
+
+             end;
+
+
+             sSummary:= 'All ' + sSumStatus +  ' Tickets';
+             if lbCategory.SelectedItemIndex > 0 then
+                sSummary:= sSummary + ' tagged as ' + lbCategory.Items[lbCategory.SelectedItemIndex].Caption;
+
+             lblSummary.HTMLText.Text:= '<font face="Segoe ui" size="14" color="clGray">' + sSummary + '</font><ind x="600">' +  IntToStr(RecordCount) + ' records found';
+
              while not EOF do
                begin
-                 if x > 1  then
-                   AddRow;
+
+
                  vLog:= TLogSummary.Create;
                  vLog.LogID:= Fields[0].AsInteger;
                  vLog.LogDate:=Fields[2].AsDateTime;
@@ -343,20 +381,12 @@ begin
                  vLog.Summary:= Fields[3].AsString;
                  vLog.Caller:= Fields[1].AsString;
                  vLog.AssignedToName:= Fields[6].AsString;
-                 vLog.Status:= Fields[7].AsINteger;
-                 vLog.JIRAID:= Fields[8].AsString;
-                 Objects[0,x]:= vLog;
+                 vLog.StatusID:= Fields[7].AsINteger;
+                 vLog.DeptName:= Fields[5].AsString;
+                 vLog.PriorityID:= Fields[8].AsInteger;
+                 vLog.DueDate:= Fields[9].AsDateTime;
 
-                 Cells[0,x]:= FormatDateTime('mm/dd/yy h:nn AM/PM',Fields[2].AsDateTime);   // call time
-                 Cells[1,x]:= Fields[0].AsString;
-                 Cells[2,x]:= Fields[4].AsString; //summary
-                 Cells[3,x]:= Fields[3].AsString;  //problem
-                 Objects[3,x]:= TObject(Fields[0].AsInteger); // holds the log id
-                 if Fields[7].AsINteger = 0 then //still open
-                     Cells[5,x]:= cstCL_OpenStatus
-                 else
-                     Cells[5,x]:= cstCL_ClosedStatus;
-                 Cells[4,x]:= Fields[6].AsString; //assigned
+                 FillLogPanelDisplay(vLog);
                  Next;
                  Inc(x);
                end;
@@ -374,105 +404,8 @@ begin
        end;
       end;
 
-       //get a list of unique callers
-       With dmMT2.qMT_CallerList do
-         try
-           Active:= false;
-           ParamByName('cid1').AsString:= sCL_memberNbr;
-           Active:= true;
-           while not EOF do
-             begin
-               sCaller:= TRIM(Fields[0].AsString);
-               if (sCaller <> '') and (stlGV_Callers.IndexOf(sCaller) = -1) then
-                   stlGV_Callers.Add(sCaller);
-               Next;
-             end;
-         finally
 
-         end;
 
-end;
-
-procedure TfrmCustomerLog.sgLogsClickCell(Sender: TObject; ARow, ACol: Integer);
-begin
-
-  case ARow of
-
-  0:  if (ACol = 0) then
-       With TfrmDateSelection.Create(nil) do
-       try
-         dtpStart.DateTime:= dCL_Start;
-         dtpEnd.DateTime:= dCL_End;
-         ShowModal;
-         if ModalResult = mrOK then
-             begin
-               dCL_Start:= dtpStart.DateTime;
-               dCL_end:= dtpEnd.DateTime;
-               GetLogs;
-             end;
-       finally
-
-       end;
-
-  else
-
-      try
-       if iCL_LogID <> StrToInt(sgLogs.Cells[1,ARow])  then
-            ShowLogDetails(StrToInt(sgLogs.Cells[1,ARow]),ARow);
-      except
-
-      end;
-  end;
-end;
-
-procedure TfrmCustomerLog.sgLogsDblClickCell(Sender: TObject; ARow,
-  ACol: Integer);
-begin
-      if arOW > 0 then
-      case ACol of
-      cstLogStatusColumn:  OpenChangeLogStatusForm(StrToInt(sgLogs.Cells[1,ARow]),sgLogs.Cells[5,ARow]);
-      cstLogIDColumn : OpenEditLogForm;
-      end;
-end;
-
-procedure TfrmCustomerLog.sgLogsFilterSelect(Sender: TObject; Column,
-  ItemIndex: Integer; FriendlyName: string; var FilterCondition: string);
-begin
-     if FilterCondition = 'All' then
-       FilterCondition:= ''
-     else
-      case Column of
-      2: FilterCondition:= ' = "' + FilterCondition + '"';
-      5: FilterCondition:= ' = *Open*';
-      end;
-
-end;
-
-procedure TfrmCustomerLog.sgLogsGetColumnFilter(Sender: TObject;
-  Column: Integer; Filter: TStrings);
-begin
-    case Column of
-    2: begin
-         Filter.Assign(stlGV_CLCtgy);
-         Filter.Insert(0,'All');
-       end;
-    5: begin
-         Filter.Clear;
-         Filter.Add('All');
-         Filter.Add('Open');
-       end;
-    end;
-end;
-
-procedure TfrmCustomerLog.sgLogsRowChanging(Sender: TObject; OldRow,
-  NewRow: Integer; var Allow: Boolean);
-begin
-       if (NewRow > 0) and not bCL_UpdateLog then
-         begin
-           if memDetail.Lines.Text <> '' then
-               btnAddNewOrUpdateEntryClick(nil); // if the user has
-           ShowLogDetails(StrToIntDef(sgLogs.Cells[1,NewRow],0),NewRow);
-         end;
 end;
 
 procedure TfrmCustomerLog.sgLogsSelectCell(Sender: TObject; ACol, ARow: Integer;
@@ -481,216 +414,126 @@ begin
      CanSelect:= ARow > 0;
 end;
 
-procedure TfrmCustomerLog.ShowLogDetails(LogId, RowID : integer);
+procedure TfrmCustomerLog.tlLogsDblClick(Sender: TObject);
 var
-  iRow : integer;
-
-  sPicked : String;
-  iPageCnt : integer;
-  tPage : TLogPage;
-  iPage : integer;
-  iLoop : integer;
-  vLog : TLogSummary;
-
-
-
-procedure AddRecordPage;
-var
-  pg1 : TLogPage;
+  vLogSum : TLogSummary;
 begin
 
-     pg1:= TLogPage.Create;
-     pg1.LogID:= LogID;
-     With dmMT2.qMT_LogDet do
-        try
-
-            pg1.PageID:= Fields[4].AsINteger;
-            pg1.Category:=  Fields[2].AsString;
-            pg1.ShippingMethod:= '';
-            pg1.Department:= '';
-            pg1.KeyedBy:= '';
-            pg1.Problem:= Fields[1].AsString;
-            pg1.Notes:= Fields[6].AsString;
-            pg1.KeyedBy:= Fields[5].AsString;
-            pg1.EntryDate:= Fields[0].AsDateTime;
-
-            stlCL_LogPages.AddObject('1',pg1);
-        finally
-
-        end;
-end;
-
-
-begin
-
-
-     if LogID = 0 then exit;
-     iCL_LogId:= LogId;
-     if RowID > 0 then
-        iRow:= RowID
-     else
-        iRow:= sgLogs.Row;
-     //clear out the pages and display
-
-     ClearLogPages;
-     iPageCnt:= 0;
-     lbLogs.Items.Clear;
-
-     vLog:= TLogSummary(sgLogs.Objects[0,iRow]);
-     ShowLogHeader(vLog);
-
-     //get the list of details
-     With dmMT2.qMT_LogDet do
-       try
-         DisableControls;
-         Active:= false;
-         ParamByName('logd').Asinteger:= LogId;
-         Active:= true;
-         iCL_LogPageCount:= RecordCount;
-         if RecordCount > 0 then   //add all the found records to the list
-           while not EOF do
-             begin
-                AddRecordPage;
-                Next;
-                Inc(iPageCnt);
-             end;
-
-         // if the row held a specific problem id, go to that, else show the first
-         //now go to the first record and display the contents
-         if stlCL_LogPages.Count > 0 then
-            begin
-               // if iPage > 0 then //we are looking for a specific page
-                //   iPage:= FindLogPageIndex(iPage);
-                //this will be sorted by the oldest record at the top, so display the informaitonm
-                tPage:= TLogPage(stlCL_LogPages.Objects[0]);
-                for iLoop := 0 to Pred(stlCL_LogPages.Count) do
-                    begin
-                      tPage:= TLogPage(stlCL_LogPages.Objects[iLoop]);
-                      DisplayLogPage(tPage);
-                    end;
-
-          //      iCL_LogPageIdx:= iPage;
-
-            end;
-
-         lbLogs.Footer.Visible:= ListImagesForLog(LogID);
-       finally
-        begin
-         Active:= false;
-         EnableControls;
-        end;
-       end;
-
-
-
-end;
-
-procedure TfrmCustomerLog.tmrDeleteEntryTimer(Sender: TObject);
-begin
-   tmrDeleteEntry.Enabled:= false;
-   DeleteLogEntryFromDB(lbLogs.Items[iCL_EntryWindowIndexBeingDeleted].Tag);
-   lbLogs.Items.Delete(iCL_EntryWindowIndexBeingDeleted);
-   iCL_EntryWindowIndexBeingDeleted:= -1;
-   FreePendingEntryToBeDeletedClass;
-
-end;
-
-procedure TfrmCustomerLog.tmrSavedTimer(Sender: TObject);
-begin
-    lblSaved.Visible:= false;
-    tmrSaved.Enabled:= false;
-end;
-
-procedure TfrmCustomerLog.btnClearLogClick(Sender: TObject);
-begin
-   if bCL_EditLog then
-     case MessageDlg('Are you sure you want to clear without saving this log?',mtConfirmation,[mbYes,mbCancel],0) of
-     mrCancel: exit;
-     mrYes : begin
-               bCL_EditLog:= false;
-
-               ClearDetails;
-            end;
-
-     end
-  else
-    ClearDetails;
-end;
-
-procedure TfrmCustomerLog.btnDeleteLogClick(Sender: TObject);
-var
-  iRow, i : integer;
-  sAdminPwd : String;
-begin
-   if iCL_LogId = 0 then exit;
-   sAdminPwd:= '';
-   if InputQuery('Confirm Log Deletion.','Please enter the admin password.',sAdminPwd) then
-     begin
-        If  ((sAdminPwd = 'ChrissyRocksMySocks') or (sAdminPwd = 'ABC123')) then
-            With dmMT2.qMT_AddOther do
-                  try
-                      SQL.Text:= 'USE [MT2];';
-                      SQL.Add('DELETE FROM dbo.tblCustomerLog WHERE logid=:log2;');
-                      SQL.Add('DELETE FROM dbo.tblCustomerLogInfo WHERE logid=:log2;');
-                      ParamByName('log2').AsInteger:= iCL_LogID;
-                      Execute;
-                      iRow:= 0;
-                      With sgLogs do
-                          try
-                            BeginUpdate;
-                            for i := 1 to Pred(RowCOunt) do
-                            if Cells[1,i] = IntToStr(iCL_LogID) then
-                                begin
-                                  iRow:= i;
-                                  break;
-                                end;
-                           If iRow > 0 then
-                              RemoveRows(iRow,1);
-                          finally
-                            EndUpdate;
-                          end;
-                  finally
-                     begin
-                        iCL_LogID:= 0;
-                        ClearDetails;
-                     end;
-                  end
+    vLogSum:= TLogSummary(tlLogs.SelectedTile.ItemOject);
+    With frmLog do
+       begin
+         iLG_LogID:= vLogSum.LogID;
+         if vCL_SelectedMember.Nbr <> '' then
+            vLG_Member:=vCL_SelectedMember
          else
-            MessageDlg('Invalid administrator password.',mtError,[mbOK],0);
-     end;
+            vLG_Member.Nbr:= vLogSum.MemberNbr;
+         Show;
+       end;
+end;
 
-          
+procedure TfrmCustomerLog.tlLogsTileAnchorClick(Sender: TObject;
+  Tile: TAdvSmoothTile; State: TTileState; Anchor: string);
+begin
+     dmMT2.PrintLog(StrToInt(Copy(Anchor,4,Length(Anchor))),0);
+end;
+
+procedure TfrmCustomerLog.tmrByCategoryTimer(Sender: TObject);
+begin
+   tmrByCategory.Enabled:= false;
+   GetLogs(0);
+end;
+
+procedure TfrmCustomerLog.tmrValidateADSITimer(Sender: TObject);
+begin
+    tmrValidateADSI.Enabled:= false;
+    vCL_ADSI.GetUser('','',vCL_ADSIUser);
+    rGV_MTUser.FullName:= vCL_ADSIUser.UserName;
+    rGV_MTUSer.SecurityGroup:= vCL_ADSIUser.Groups;
+    Caption:= 'Customer Log - Staff : ' + rGV_MTUser.FullName;
+
+    //get other bits
+    rGV_MTUser.EMail:= dmMT2.GetUserEMail(rGV_MTUser.FullName);
+    rGV_MTUser.EMailGroup:= dmMT2.GetUserDistList;
+
+
+
+end;
+
+procedure TfrmCustomerLog.btnMTAdminClick(Sender: TObject);
+begin
+
+    if IsMemberOfMTAdminGroup then
+       With TfrmMTAdmin.Create(nil) do
+         try
+            ShowModal;
+         finally
+         Free;
+         end
+      else
+        MessageDlg('You must be a member of the MultiTracking Admin Group to access this area. Please contact your manager to authorize access,',mtInformation,[mbOK],0);
+end;
+
+procedure TfrmCustomerLog.btnMTAlertClick(Sender: TObject);
+begin
+    With TfrmAlerts.Create(nil) do
+       try
+         ShowModal;
+       finally
+         Free;
+       end;
+end;
+
+procedure TfrmCustomerLog.btnMTReportsClick(Sender: TObject);
+begin
+    frmMTSearch.Show;
+end;
+
+procedure TfrmCustomerLog.btnMTSearchClick(Sender: TObject);
+var
+  sSearchText : String;
+  WhatToLookFor : TSearchType;
+begin
+     sSearchText:= eSearch.Text;
+     if (Length(sSearchText) = 6) AND IsValidInt(Copy(sSearchText,1,6)) then
+        WhatToLookFor:= stLogID
+     else
+       if ((Length(sSearchText) = 5) and IsValidInt(sSearchText)) OR ((IsValidInt(Copy(sSearchText,1,5)) AND (Copy(sSearchText,1,6) = '_'))) then
+           WhatToLookFor:= stMember;
+     Case WhatToLookFor of
+     stMember :  FindMember(sSearchText,0);
+     stLogID :  FindMember('',StrToInt(sSearchText));
+     End;
+
+
+
 
 end;
 
 procedure TfrmCustomerLog.btnNewLogClick(Sender: TObject);
-var
-  ValidateLog  : TBeforeNewLogValidation;
 begin
-    ValidateLog:= BeforeNewLogValidation;
-    Case ValidateLog of
-    vlNoCLientSelected : MessageDLg('Please select a client before starting a log.',mtInformation,[mbOK],0);
-    vlSuccess: OpenNewLogForm;
-    End;
-end;
-
-procedure TfrmCustomerLog.btnAddNewOrUpdateEntryClick(Sender: TObject);
-begin
-    if memDetail.Lines.Text <> '' then
-    if iCL_EntryIDBeingEdited > 0 then
-        UpdateEntry
-    else
-        SaveNewLogEntry;
-
-
-
-
+    With TfrmCreateNewLog.Create(nil) do
+       try
+         pnlLog.Caption.HTMLText:= '<Font face="segoe UI" size="14" color="clGray">' + vCL_SelectedMember.Nbr + '  ' + vCL_SelectedMember.Name + '</font>';
+         cbCNL_Caller.Items.Assign(stlGV_Callers);
+         cbCNL_Ctgy.Items.Assign(stlGV_ActiveCtgy);
+         cbDepartment.Items.Assign(stlGV_CLDept);
+         sNL_CustomerID:= vCL_SelectedMember.Nbr;
+         sNL_CustomerName:= vCL_SelectedMember.Name;
+         iNL_SiteID:= vCL_SelectedMember.SiteID;
+         ShowModal;
+         //refresh log
+         GetLogStatusCount(vCL_SelectedMember.Nbr);
+         Application.ProcessMessages;
+         GetLogs(0);
+       finally
+         Free;
+       end;
 end;
 
 procedure TfrmCustomerLog.btnPreviewClick(Sender: TObject);
 begin
    try
-    dmMT2.PrintLog(iCL_LogID,true);
+    dmMT2.PrintLog(iCL_LogID,0);
    except on E: Exception do
     MessageDlg('An error printing has occured. The nature of the error states "' + e.Message + '"' + #13 +'The error has been forwarded to the appropriate authorities.',mtError,[mbOK],0);
 
@@ -700,51 +543,44 @@ end;
 procedure TfrmCustomerLog.btnPrintLogClick(Sender: TObject);
 begin
    try
-    dmMT2.PrintLog(iCL_LogID,false);
+    dmMT2.PrintLog(iCL_LogID,1);
    except on E: Exception do
     MessageDlg('An error printing has occured. The nature of the error states "' + e.Message + '"' + #13 +'The error has been forwarded to the appropriate authorities.',mtError,[mbOK],0);
 
    end;
 end;
 
-procedure TfrmCustomerLog.cbMemberChange(Sender: TObject);
+procedure TfrmCustomerLog.Label1Click(Sender: TObject);
 begin
-  if (ActiveControl = cbMember) and (cbMember.ItemIndex > -1) then
-     FindMember(cbMember.Items[cbMember.ItemIndex],True);
+     FilterLogs(0);
 end;
 
-procedure TfrmCustomerLog.ClearDetails;
-
+procedure TfrmCustomerLog.lbCategoryChange(Sender: TObject);
 begin
-    // clear all the details
-     ClearSummaryHEader;
-     memDetail.Lines.Clear;
-
-
-     // now clear out the log pages
-     ClearLogPages;
-
-
-
-
+     FilterLogs(0);
 end;
 
-function TfrmCustomerLog.GetNewLogId : integer;
+procedure TfrmCustomerLog.lbCategoryItemSelected(Sender: TObject;
+  itemindex: Integer);
 begin
-  WIth dmMT2.qMT_Logid do
-     try
-       Active:= true;
-       Result:= Fields[0].Asinteger + 1;
+        FilterLogs(0);
+end;
 
-     finally
-       Active:= false;
+procedure TfrmCustomerLog.lblClientAnchorClick(Sender: TObject; Anchor: string);
+var
+  sEMail : String;
+begin
+   if anchor = 'emal' then
+     begin
+         sEMail:= 'mailto:' + vCL_SelectedMember.email;
+         ShellExecute(Self.Handle, 'open',PWideChar(sEMail),nil,nil,SW_SHOWNORMAL);
+     end;
+ if anchor = 'Phone' then
+     begin
+         sEMail:= 'callto:' + vCL_SelectedMember.Phone;
+         ShellExecute(Self.Handle, 'open',PWideChar(sEMail),nil,nil,SW_SHOWNORMAL);
      end;
 
-end;
-
-procedure TfrmCustomerLog.lbLogsFooterClick(Sender: TObject; X, Y: Integer);
-begin
-     ShowImageListForm(iCL_logID);
 end;
 
 procedure TfrmCustomerLog.lbLogsGraphicRightClick(Sender: TObject;
@@ -752,26 +588,8 @@ procedure TfrmCustomerLog.lbLogsGraphicRightClick(Sender: TObject;
 begin
     if iCL_EntryWIndowIndexBeingDeleted > -1 then exit;
     iCL_EntryWindowIndexBeingDeleted:= itemindex;
-    SavePendingDeletedItemToTemporaryHolder(itemindex);
-    ShowUndoEntryWindow(itemindex);
-    tmrDeleteEntry.Enabled:= true;
 
 
-end;
-
-procedure TfrmCustomerLog.lbLogsItemDblClick(Sender: TObject;
-  itemindex: Integer);
-var
-  vSelectedItem : TADVSmoothListBoxItem;
-begin
-    if DoesTheItemEditMemoContainText and (MessageDlg('Save previous entry before editing this entry?',mtConfirmation,[mbYes,mbNo],0) = mrYes) then // automatically save the data
-          SaveNewLogEntry;
-    memDetail.Lines.Clear;
-    vSelectedItem:= lbLogs.Items[itemindex];
-    memDetail.Lines.Text:= vSelectedItem.Notes;
-    iCL_EntryIDBeingEdited:= vSelectedItem.Tag;
-    iCL_EntryWindowIndexBeingEdited:= itemindex;
-    ChangeMemoStatusToEditing;
 
 
 
@@ -781,340 +599,74 @@ procedure TfrmCustomerLog.lbLogsItemDeleteClicked(Sender: TObject;
   Item: TAdvSmoothListBoxItem; var Allow: Boolean);
 begin
       Allow:= false;
-      CancelPendingDeletion;
-end;
-
-procedure TfrmCustomerLog.ClearGrid;
-var
-  x,y : integer;
-begin
-       With sgLogs do
-        for x:= 0 to Pred(ColCount) do
-           for y:= 1 to Pred(RowCount) do
-              Cells[x,y]:= '';
-        sgLogs.RowCount:= 2;
 
 end;
 
-procedure TfrmCustomerLog.ClearLogPages;
+procedure TfrmCustomerLog.ADGGlowButton1Click(Sender: TObject);
+const
+  olMailItem = 0;
 var
-  i : integer;
-begin
-     With stlCL_LogPages do
-       for i:= 0 to Pred(count) do
-           try
-             Objects[i].Free;
-             Objects[i]:= nil;
-           except
-           end;
-     stlCL_logPages.Clear;
-end;
-
-procedure TfrmCustomerLog.DisplayLogPage(LogPage: TLogPage);
-var
-  sPicked : String;
-  iPID : integer;
-  s : String;
-  itmLogPageItem : TADVSmoothListBoxItem;
-
-
+   sAttach  : String;
+   bSuccess : boolean;
+   sRecipient , sSubject,sMessage : String;
+   sEMail : String;
+    Outlook, MailItem: OLEVariant;
 begin
 
-    itmLogPageItem:= lbLogs.Items.Add;
-    itmLogPageItem.Caption:=  FormatDateTime('mmm dd yyyy h:nn AM/PM',LogPage.EntryDate) +  '      ' + LogPage.KeyedBy;
-    itmLogPageItem.Notes:= LogPage.Problem;
-    itmLogPageItem.Tag:= LogPage.PageID;
-{    cbCaller.Text:= LogPage.Caller;
-    lblLogDate.Caption:= FormatDateTime('mmm dd yyyy h:nn AM/PM',LogPage.LogDate);
-    lblOpenedBy.Caption:= LogPage.OpenedBy;
-    cbCtgy.ItemIndex:= cbCtgy.Items.IndexOf(LogPage.Category);
-
-    cbStaff.ItemIndex:= cbStaff.Items.IndexOf( LogPage.KeyedBy ) ;
-    memDetail.Lines.Text:= LogPage.Problem;
-    cbDept.ITemINdex:= cbDept.Items.IndexOf( LogPage.Department);
-    iPID:= LogPage.PageID;
-    if iPID = 0 then
-       s:= 'New'
-    else
-       s:= IntToStr(iPID);
-
-
-    lblLogPageID.Caption:=  s;
-    chkClosed.Checked:= LogPage.Closed;
-
-    sPicked:= LogPage.PickedBy;}
- end;
-
-
-function TfrmCustomerLog.FindLogRow(LogID: string) : integer;
-var
-  i : integer;
-begin
-    Result:= -1;
-    With sgLogs do
-     for i:= 1 to  Pred(RowCount) do
-         if Cells[1,i] = LogID then
-           begin
-             Result:= i;
-             break;
-           end;
-
-
-end;
-function TfrmCustomerLog.SaveLogPageToDB(LogPageIn: TLogPage) : integer;
-var
-  iPickedBy, i : integer;
-begin
-     // a log page requirement is department and categor and since this is a foreign key, they must exist in the other tables
-
-     Result:= 0;
-
-
-
-     With dmMT2.qMT_InsertCustomerLog do
-             try
-                ParamByName('log2').AsInteger:= LogPageIn.LogID;
-                ParamByName('dep2').AsInteger:= 9; //in TV2 we dont nned to attach the departments to the log but referential intergrity demands that this field is completer
-                ParamByName('prb2').AsString:= LogPageIn.Problem;
-                ParamByName('cgy2').AsInteger:= 52; //in TV2 we dont need to attach the category to the log but referential intergrity demands that this field is complete with a legitimate numbver
-                ParamByName('not2').AsString:= '';
-                ParamByName('smt2').AsString:= '';
-                ParamByName('kby2').AsINteger:= 0; //keyed by is not a required field
-                ParamByName('cdt2').AsDateTime:= 0;
-                ParamByName('cls2').AsBoolean:= LogPageIn.Closed;
-                ParamByName('pid1').AsInteger:= LogPageIn.PageID;
-                ParamByName('enby').AsString:= LogPageIn.KeyedBy;
-                ParamByName('pby2').AsInteger:= 0;
-                Execute;
-                //we need the new Problem ID . This will only work as an insert, otherwise it returns 0
-                Result:= LogPageIn.PageID;
-              except
-                //the reason for failure would be not having a valid department or caegory number
-              end;
-
-
-end;
-
-function TfrmCustomerLog.CreateOrUpdateLogSummaryInDB(DataSourceIn : TLogSummary ) : integer;
-var
-  iEmployeeID : integer;
-  iLogID : integer;
-
-begin
-   //create a new log . Data Validation will have occured
-
-   iEmployeeID:= iGV_empID;
-
-   With dmMT2.qMT_InsertCustomerLogInfo do
-          try   //LogID is an autoinc field or in SQL an Identity field. One of the options with the TMSQuery tools must be enabled.
-              //when Options.QueryIdentity = True the newly added identity field ID is returned as Field[0], hence the code at the end of the EXECSQL
-               // in the query the comand SELECT SCOPE_INDENTITY() must also be present following the last command
-              ParamByName('log2').AsInteger:= DataSourceIn.LogID;
-              ParamByName('cnbr').AsString:= sCL_MemberNbr;
-              ParamByName('cal2').AsString:= DataSourceIn.Caller;
-              ParamByName('ldt2').AsDateTime:= DataSourceIn.LogDate; // if this is an existing log, this date will not get changed
-              ParamByName('eid2').AsInteger:= iEmployeeId; //opendby comes from the name in the field. If this is a new log it will be the current user, otherwise it is the person who created the log
-              ParamByName('rsvd').AsBoolean:= True;
-              ParamByName('ctgy').AsInteger:= DataSourceIn.CategoryID;
-              ParamByName('asgn').Asinteger:= DataSourceIn.AssignedToID;
-              ParamByName('sumy').AsString:= DataSourceIn.Summary;
-              ParamByName('stas').AsInteger:= 0 ;// be default all new records are flagged as open
-              ParamByName('jira').AsString:= DataSourceIn.JIRAID;
-              Execute;
-              Result:= Fields[0].Asinteger; //this will be a new log entry as assigned by SQL identity field
-
-          finally
-
-          end;
-end;
-procedure TfrmCustomerLog.AddToLogGrid(NewLogSummary : TLogSummary);
-var
-  iRow : integer;
-begin
-
-        lblLogID.Caption:= IntToStr(NewLogSummary.LogID);
-        iRow:= 1;
-        With sgLogs do
-          try
-             BeginUpdate;
-             InsertRows(iRow,1);
-             Cells[0,iRow]:= FormatDateTime('mm dd yy h:nn AM/PM',NewLogSummary.LogDate); //if the log was updated, not created, then this date time is not correct, nor is it saved to the data. So it will be amended when scrolling the DB to the correct time
-             Cells[1,iRow]:= IntToStr(NewLogSummary.LogID);
-             Cells[2,iRow]:= NewLogSummary.CategoryName;
-             Cells[3,iRow]:= NewLogSummary.Summary;
-             Cells[4,iRow]:= NewLogSummary.AssignedToName;
-             Cells[5,iRow]:= cstCL_OpenStatus;
-             Objects[0,iRow]:= NewLogSummary;
-          finally
-            EndUpdate;
-          end;
-
-
-end;
-
-procedure TfrmCustomerLog.UpdateRowInLogGrid(RowIndex : integer);
-var
-   clLogSum : TLogSummary;
-   iRow : integer;
-begin
-
-        clLogSum:= TLogSummary(sgLogs.Objects[0,RowIndex]);
-        lblLogID.Caption:= IntToStr(clLogSum.LogID);
-        iRow:= RowIndex;
-
-        With sgLogs do
-          try
-             BeginUpdate;
-             Cells[0,iRow]:= FormatDateTime('mm dd yy h:nn AM/PM',clLogSum.LogDate); //if the log was updated, not created, then this date time is not correct, nor is it saved to the data. So it will be amended when scrolling the DB to the correct time
-             Cells[1,iRow]:= IntToStr(clLogSum.LogID);
-             Cells[2,iRow]:= clLogSum.CategoryName;
-             Cells[3,iRow]:= clLogSum.Summary;
-             Cells[4,iRow]:= clLogSum.AssignedToName;
-             case clLogSum.Status of
-             1: Cells[5,iRow]:= cstCL_ClosedStatus;
-             else
-                 Cells[5,iRow]:= cstCL_OpenStatus;
+     sAttach:= dmMT2.PrintLog(iCL_LogID,2);
+     With TfrmEMail.Create(nil) do
+       try
+          eSubject.Text:= 'TV2 Log ' + IntToStr(iCL_LogID);
+          ShowModal;
+          bSuccess:= ModalResult = mrOK;
+          if bSuccess then
+             begin
+                sRecipient:= eRecipient.Text;
+                sSubject:= eSubject.Text;
+                if TRIM(memBody.Lines.Text) = '' then
+                   sMessage:= sSubject
+                else
+                   sMessage:= memBody.Lines.Text;
              end;
 
-          finally
-            EndUpdate;
-          end;
 
+       finally
+          Free;
+       end;
 
-end;
+     if bSuccess then
+       begin
+            sEMail:= 'mailto:' + sRecipient + '?Subject= ' + sSubject + '&Body=' + sMessage + '&ATTACH=' + sAttach  ;
+            // ShellExecute(Self.Handle, 'open',PWideChar(sEMail),nil,nil,SW_SHOWNORMAL);
+            try
+              Outlook := GetActiveOleObject('Outlook.Application');
+            except
+               Outlook := CreateOleObject('Outlook.Application');
+            end;
+            try
+            MailItem := Outlook.CreateItem(olMailItem);
+            MailItem.Recipients.Add(sRecipient);
+            MailItem.Subject := sSubject;
+            MailItem.Body := sMessage ;
+            MailItem.Attachments.Add(sAttach);
+            MailItem.Send;
+            finally
+              begin
+                Outlook := Unassigned;
+                DeleteFile(sAttach);
+              end;
+            end;
 
-
-function TfrmCustomerLog.BeforeNewLogValidation : TBeforeNewLogValidation;
-begin
-   Result:= vlSuccess;
-   if (Result = vlSuccess)  and (sCL_MemberNbr = '')  then
-      Result:= vlNoClientSelected;
-
-
-end;
-
-procedure TfrmCustomerLog.OpenNewLogForm;
-var
-   bModalResult : boolean;
-   iNewLog, iDx : integer;
-   clLogSum : TLogSummary;
-begin
-       With TfrmCreateNewLog.Create(nil) do
-               try
-                    cbCNL_Caller.Items.Assign(stlGV_Callers);
-                    cbCNL_Ctgy.Items.Assign(stlGV_CLCtgy);
-                    cbCNL_AssignedTo.Items.Assign(stlGV_Dept);
-                    cbLogSummary.Items.Assign(stlGV_Log_Summary_List);
-                    ShowModal;
-                    bModalResult:= ModalResult = mrOK;
-                    if bModalResult then
-                         begin
-                            ClearDetails; //removes all the current information including clearing out the log pages
-                            //now save this as a new blank log
-                            clLogSum:= TLogSummary.Create;
-                            clLogSum.Caller:= cbCNL_Caller.Text;
-                            iDx:= cbCNL_Ctgy.ItemIndex;
-                            if iDx > -1 then
-                              begin
-                               clLogSum.CategoryID:= Integer(cbCNL_Ctgy.Items.Objects[iDx]);
-                               clLogSum.CategoryName:= cbCNL_Ctgy.Items[iDx];
-                              end
-                            else
-                              begin
-                                clLogSum.CategoryID:= -1;
-                                clLogSum.CategoryName:= '';
-                              end;
-                            iDx:= cbCNL_AssignedTo.ItemIndex;
-                            if iDx >  -1 then
-                              begin
-                                clLogSum.AssignedToID:=  Integer(cbCNL_AssignedTo.Items.Objects[iDx]);
-                                clLogSum.AssignedToName:= cbCNL_AssignedTo.Items[iDx];
-                              end
-                            else
-                              begin
-                                clLogSum.AssignedToID:= -1;
-                                clLogSum.AssignedToName:= '';
-                              end;
-
-                            clLogSum.Summary:= cbLogSummary.Text;
-                            clLogSum.LogDate:= Now;
-                            clLogSum.Status:= 0;
-                            clLogSum.JIRAID:= eJIRA.Text;
-                            sGV_Log_Summary:= cbLogSummary.Text;
-
-
-                            clLogSum.LogID:= CreateOrUpdateLogSummaryInDB(clLogSum);
-                            iNewLog:= clLogSum.LogID;
-                            ShowLogHeader(clLogSum);
-                            AddToLogGrid(clLogSum);
-
-
-
-
-                            iCL_LogID:= iNewLog;
-                            bCL_EditLog:= true;
-
-                            if stlGv_Log_Summary_List.IndexOf(cbLogSummary.Text) = -1 then
-                               begin
-                                 stlGV_Log_Summary_List.Add(cbLogSummary.Text);
-                                 stlGV_Log_Summary_List.SaveToFile(ExtractFilePath(ParamStr(0)) + cnstSummaryFile);
-                               end;
-
-
-                         end;
-
-               finally
-                     Free;
-               end;
-
-end;
-
-procedure TfrmCustomerLog.OpenChangeLogStatusForm(LogID : integer  ; CurrentStatus : String);
-var
-   bModalResult : boolean;
-   sChangedBy : String;
-   dChangedOn  : TDateTIme;
-   iNewStatus : integer;
-begin
-
-       if Pos('Closed',CurrentStatus) > 0 then
-         iNewStatus:= 1
-       else
-         iNewStatus:= 0;
-       With TfrmChangeLogStatus.Create(nil) do
-               try
-                    eChangedBy.Text:= sGV_EmpName;
-                    cbStatus.ItemIndex:= iNewStatus;
-                    ShowModal;
-                    bModalResult:= (ModalResult = mrOK) and (iNewStatus <> cbStatus.ItemIndex) ; //make sure the status was changed
-                    if bModalResult then
-                         begin
-                            sChangedBy:= eChangedBy.Text;
-                            dChangedOn:= dtpChangedOn.DateTime;
-                            iNewStatus:= cbStatus.ItemIndex;
-                         end;
-
-               finally
-                   Free;
-               end;
-       if bModalResult then
-        begin
-          If UpdateLogStatus(LogID,iNewStatus,sChangedBy,dChangedOn) = 0 then
-            // redisplay the line
-            GetLogs;
-
-        end;
-
-
+       end;
 
 end;
 
 function TfrmCustomerLog.UpdateLogStatus(LogID , NewStatus : integer; StatusChangedBy : String; StatusChangedDate : TDateTime ) : shortint;
 begin
      Result:= 0; //success
-     With dmMT2.qMT_Exec do
+     With dmMT2.fqExec do
         try
-           SQL.Text:= 'Use [MT2]';
+           SQL.Text:= UseDB;
            SQL.Add('UPDATE tblCustomerLogInfo SET Status=:stas,ClosedBy=:clby,ClosedDate=:cldt WHERE LogID = :lgid');
            ParamByName('lgid').AsInteger:= LogID;
            ParamByName('stas').AsInteger:= NewStatus;
@@ -1127,49 +679,20 @@ begin
         end;
 end;
 
-function TfrmCustomerLog.DoesTheItemEditMemoContainText : boolean;
+procedure TfrmCustomerLog.chkOnlyOpenClick(Sender: TObject);
 begin
-    Result:= memDetail.Lines.Text <> '';
+   GetLogs(0);
 end;
-
-procedure TfrmCustomerLog.SaveNewLogEntry;
-var
-  pg1 :  TLogPage;
-begin
-       pg1:= TLogPage.Create;
-       pg1.LogID:= iCL_LogID;
-       pg1.PageID:= 0;
-       pg1.LogDate:= Now;
-       pg1.Caller:= '';
-       pg1.Category:= '';
-       pg1.Department:= '';
-       pg1.Problem:= memDetail.Lines.Text;
-       pg1.EntryDate:= Now;
-       pg1.KeyedBy:= sGV_EmpName;
-       stlCL_LogPages.AddObject('1',pg1);
-       iCL_LogPageCount:= stlCL_LogPages.Count;
-       iCL_LogPageIdx:= Pred(iCL_LogPageCount);
-       memDetail.Lines.Clear;
-       SaveLogPagetoDB(pg1);
-       DisplayLogPage(pg1);
-end;
-
-procedure TfrmCustomerLog.ChangeMemoStatusToEditing;
-begin
-     // set the panel color to blue
-     pnlLogInput.Color:= clBlue;
-end;
-
 
 procedure TfrmCustomerLog.UpdateEntryInDB;
 begin
-     With dmMT2.qMT_Exec do
+     With dmMT2.fqExec do
         try
-           SQL.Text:= 'Use [MT2]';
+           SQL.Text:= UseDB;
            SQL.Add('UPDATE tblCustomerLog SET Problem=:entry WHERE LogID = :lgid AND ProblemID = :pbid');
            ParamByName('lgid').AsInteger:= iCL_LogID;
            ParamByName('pbid').AsInteger:= iCL_EntryIDBeingEdited;
-           ParamByName('entry').AsString:= memDetail.Lines.Text;
+           ParamByName('entry').AsString:= 'Big Problem';
            ExecSQL;
 
 
@@ -1181,9 +704,9 @@ end;
 
 procedure TfrmCustomerLog.DeleteLogEntryFromDB(EntryID: Integer);
 begin
-     With dmMT2.qMT_Exec do
+     With dmMT2.fqExec do
         try
-           SQL.Text:= 'Use [MT2]';
+           SQL.Text:= UseDB;
            SQL.Add('DELETE FROM tblCustomerLog WHERE LogID = :lgid AND ProblemID = :pbid');
            ParamByName('lgid').AsInteger:= iCL_LogID;
            ParamByName('pbid').AsInteger:= EntryID;
@@ -1199,60 +722,10 @@ end;
 procedure TfrmCustomerLog.UpDateEntry;
 begin
     UpdateEntryInDB;
-    UpdateEntryWindow;
-    memDetail.Lines.Clear;
-    pnlLogInput.Color:= clOrange;
+
+
     iCL_EntryWindowIndexBeingEdited:= -1;
 
-end;
-
-procedure TfrmCustomerLog.UpdateEntryWindow;
-begin
-    //
-    if iCL_EntryWindowIndexBeingEdited > -1 then
-        lbLogs.Items[iCL_EntryWindowIndexBeingEdited].Notes:= memDetail.Lines.Text;
-end;
-
-procedure TfrmCustomerLog.ShowUndoEntryWindow(EntryIndex: Integer);
-begin
-     lbLogs.Items[EntryIndex].Caption:= '';
-     lbLogs.Items[EntryIndex].Notes:= '';
-     lbLogs.Items[EntryIndex].Info:= '';
-     lbLogs.Items[EntryIndex].DeleteButton:= true;
-     lbLogs.Items[EntryIndex].DeleteButtonVisible:= true;
-end;
-
-procedure TfrmCustomerLog.SavePendingDeletedItemToTemporaryHolder(EntryIndex: integer);
-var
-   vItemBeingDeleted : TADVSmoothListBoxItem;
-begin
-     if not Assigned(vCL_PendingEntryToBeDeleted) then
-         vCL_PendingEntryToBeDeleted:= TLogPage.Create;
-
-     vItemBeingDeleted:= lbLogs.Items[EntryIndex];
-     vCL_PendingEntryToBeDeleted.Problem:= vItemBeingDeleted.Notes;
-     vCL_PendingEntryToBeDeleted.PageID:= vItemBeingDeleted.Tag;
-     vCL_PendingEntryToBeDeleted.LogID:= iCL_LogID;
-     vCL_PendingEntryToBeDeleted.EntryIndex:= EntryIndex;
-     vCL_PendingEntryToBeDeleted.Caption:= vItemBeingDeleted.Caption;
-end;
-
-procedure TfrmCustomerLog.CancelPendingDeletion;
-var
-  iDx : integer;
-begin
-     tmrDeleteEntry.Enabled:= false;
-     if Assigned(vCL_PendingEntryToBeDeleted) then
-        begin
-          iDx:= vCL_PendingEntryToBeDeleted.EntryIndex;
-          lbLogs.Items[iDx].Caption:= vCL_PendingEntryToBeDeleted.Caption;
-          lbLogs.Items[iDx].Notes:= vCL_PendingEntryToBeDeleted.Problem;
-          lbLogs.Items[iDx].Info:= 'Delete';
-          lbLogs.Items[iDx].DeleteButton:= false;
-          lbLogs.Items[iDx].DeleteButtonVisible:= false;
-          FreePendingEntryToBeDeletedClass;
-          iCL_EntryWIndowIndexBeingDeleted:= -1;
-        end;
 end;
 
 procedure TfrmCustomerLog.FreePendingEntryToBeDeletedClass;
@@ -1264,207 +737,553 @@ begin
      end;
 end;
 
-procedure TfrmCustomerLog.OpenEditLogForm;
+procedure TfrmCustomerLog.FormActivate(Sender: TObject);
 var
-  bModalResult : boolean;
-  vLog : TLogSummary;
-  iRow : integer;
+  dtLast : TDateTime;
 begin
-    //opens the log form for editing
-           With TfrmCreateNewLog.Create(nil) do
+    //check for any log changes
+    dtLast:= dmMT2.GetLastUpdate;
+    if dtLast > dtGV_LastUpDateCheck then
+       begin
+         dtGV_LastUpdateCheck:= dtLast;
+         if GetSearchStatus = 0 then
+          begin
+           DisplayAllLogs;
+          end
+         else
+          begin
+           GetLogStatusCount(vCL_SelectedMember.Nbr);
+           GetLogs(0);
+          end;
+
+       end;
+
+end;
+
+function TfrmCustomerLog.FormatPhone(PhoneIn : String) : String;
+begin
+        Result:= PhoneIn;
+        if Length(Result) > 10 then
+           Result:= Copy(Result,1,10);
+        if Length(Result) = 10 then
+            begin
+
+               System.Insert('(',Result,1);
+               System.Insert(')',Result,5);
+               System.Insert(' ',Result,9);
+            end;
+end;
+
+procedure TfrmCustomerLog.DisplayMember;
+begin
+
+
+          With lblClient.HTMLText do
+            begin
+               Clear;
+
+               Add('<font size="14" face="segoe ui" color="clWHite">' + vCL_SelectedMember.Nbr + '</font><br>');
+               Add('<FONT face="segoe ui" size="9"><b>' + vCL_SelectedMember.Name + '</b></FONT><br>');
+               Add(vCL_SelectedMember.Address1 + '<br>');
+               Add(vCL_SelectedMember.City + ', ' + vCL_SelectedMember.Prov + ' ' + vCL_SelectedMember.PostalCode + '<br><br>');
+               Add('<Font face="segoe ui" size="8">Phone : <b><A HREF="Phone">' + vCL_SelectedMember.Phone + '</a></b><br>Fax : <b>' + vCL_SelectedMember.Fax + '</b></font>');
+               If vCL_SelectedMember.email  <> '' then
+                   Add('<br><A HREF="emal">' + vCL_SelectedMember.email + '</A>');
+               if vCL_SelectedMember.WDDCRep <> '' then
+                  Add('<br><br><font face="segoe ui" size="8">WDDC Rep : ' + vCL_SelectedMember.WDDCRep + '</font>');
+
+           end;
+
+end;
+procedure TfrmCustomerLog.DisplayNoMemberFound;
+begin
+
+     lblClient.HTMLText.Text:= 'No member selected';
+end;
+
+procedure TfrmCustomerLog.eSearchKeyPress(Sender: TObject; var Key: Char);
+begin
+  if key = #13 then
+     btnMTSearchClick(btnMTSearch);
+end;
+
+procedure TfrmCustomerLog.FillLogPanelDisplay(LogItem: TLogSummary);
+const
+    FontTitle = '<font face="segoe ui" size="8" color="clGray">';
+    FontContent = '<font face="segoe ui" size="12" color="clBlack">';
+var
+   sCaption : String;
+   sMember  : String;
+   sNotesLine1 : String;
+   sNotesLine2 : String;
+   sPriority : String;
+   iStatusIdx : integer;
+   sFontPriority : String;
+   MyTile : TADVSmoothTile;
+   sDate : String;
+   sDueDate : String;
+   sStatus : String;
+
+begin
+          iStatusIDX:= LogItem.StatusID;
+          sMember:= '';
+          case LogItem.PriorityID of
+          0: sFontPriority:= '<font face="segoe ui" size="12" color="clBlack">Low';
+          1: sFontPriority:= '<font face="segoe ui" size="12" color="clBlack">Medium';
+          2: sFontPriority:= '<font face="segoe ui" size="12" color="clBlack"><b>High</b>';
+          3: sFontPriority:= '<font face="segoe ui" size="12" color="clRed"><b>CRITICAL</b>';
+          end;
+          sDate:= FormatDateTIme('mmm dd yyyy hh:nn am/pm',LogItem.LogDate);
+          if LogItem.DueDate > 0 then
+            begin
+             if DateOf(LogItem.DueDate) = DateOf(now) then
+                sDueDate:= 'Today'
+             else
+                sDueDate:= FormatDateTime('mmm dd yyyy',LogItem.DueDate)
+            end
+          else
+             sDueDate:= '';
+          if vCL_SelectedMember.Nbr = '' then
+              sMember:= '<font face="segoe ui" size="10" color="clGray">' + LogItem.MemberNbr + ' ' + LogItem.MemberName + '</font>';
+
+          sStatus:= '<font face="Segoe UI" color="clWhite" size="10" bgColor="' + StatusColors[iStatusIdx] + '">'  + GetStatusName(iStatusIDX) +  '</font>';
+
+          if sMember <> '' then
+             // sCaption:= '<ind x="10"><font face="segoe ui" color="clNavy" size="10"> ' + IntToStr(LogItem.LogID) + '</font><ind x="100">' + sMember +  '<ind x="740"><font face="Segoe UI" size = "10">' + sDate + '</font><br><img src="idx:' + IntToStr(iStatusIdx) + '"><ind x="100"><font face="Segoe UI" size="14">' + Copy(LogItem.Summary,1,45) + '</font>'
+             sCaption:= '<ind x="10"><font face="segoe ui" color="clNavy" size="10"> ' + IntToStr(LogItem.LogID) + '</font><ind x="140">' + sMember +  '<ind x="700"><font face="Segoe UI" size = "10">' + sDate + '</font><ind x="880"><A HREF="PRT' + IntToStr(LogItem.LogID) + '"><img src="print16.png"></A><br>'  + sStatus + '<ind x="140"><font face="Segoe UI" size="14">' + Copy(LogItem.Summary,1,45) + '</font>'
+          else
+             //sCaption:= '<ind x="10"><font face="segoe ui" size="10"> ' + IntToStr(LogItem.LogID) + '</font><ind x="100"><font face="Segoe UI" size="14">' + Copy(LogItem.Summary,1,45) + '</font><ind x="740"><font face="Segoe UI" size = "10">' + sDate + '</font><br><img src="idx:' + IntToStr(iStatusIdx) + '">';
+             sCaption:= '<ind x="10"><font face="segoe ui" size="10"> ' + IntToStr(LogItem.LogID) + '</font><ind x="140"><font face="Segoe UI" size="14">' + Copy(LogItem.Summary,1,45) + '</font><ind x="700"><font face="Segoe UI" size = "10">' + sDate + '</font><ind x="880"><A HREF="PRT' + IntToStr(LogItem.LogID) + '"><img src="print16.png"></A><br>' + sStatus ;
+          sNotesLine1:= FontTitle + 'Caller</font><ind x="100">' + FontTitle + 'Assigned</font><ind x="250">' + FontTitle + 'Category</font><ind x="500">' + FontTitle + 'Department</font><ind x="700">' + FontTitle +  'Priority</font><ind x="800">' + FontTitle + 'Due Date</font><br>';
+          With LogItem do
+            sNotesLine2:= FontContent + Copy(Caller,1,10) +  '</font><ind x="100">' + FontContent +  AssignedToName +  '</font><ind x="250">' + FontContent + CategoryName +  '</font><ind x="500">' + FontContent + DeptName +  '</font><ind x="700">' + sFontPriority + '</font><ind x="800">' + FontContent + sDueDate  + '</font>';
+          MyTile:= tlLogs.Tiles.Add;
+          MyTile.Content.TextPosition:= tpTopLeft;
+          MyTile.Content.Text:= sCaption + '<br>' + sNotesLine1 + sNotesLine2;
+          MyTile.ItemOject:= LogItem;
+
+end;
+
+procedure TfrmCustomerLog.GetCategoryList;
+var
+  CtgyItem : TAdvSmoothListBoxItem;
+  AllCtgy, ActiveCtgy    : TCategory;
+begin
+    With dmMT2.fqSelect do
+      try
+        Active:= false;
+        SQL.Text:= UseDB;
+        SQL.Add('SELECT category, categoryid,inactive,invoicelink');
+        SQL.Add(' from dbo.tblLogCategories');
+        SQL.Add('ORDER BY category');
+        Active:= true;
+        lbCategory.Items.Clear;
+        stlGV_ActiveCtgy.Clear;
+        stlGV_AllCtgy.Clear;
+        CtgyItem:=  lbCategory.Items.Add ;
+        CtgyItem.Caption:= 'All';
+        CtgyItem.ItemObject:= TObject(0);
+        while not EOF do
+          begin
+
+            AllCtgy:= TCategory.Create;
+            AllCtgy.CtgyID:= Fields[1].AsInteger;
+            AllCtgy.CtgyName:= Fields[0].AsString;
+            AllCtgy.InvoiceLink:= Fields[3].AsInteger = 1;
+
+            stlGV_AllCtgy.AddObject(Fields[0].AsString,AllCtgy);
+            if Fields[2].AsInteger = 0 then
+              begin
+                CtgyItem:=  lbCategory.Items.Add ;
+                CtgyItem.Caption:= Fields[0].AsString;
+                CtgyItem.ItemObject:= TObject(Fields[1].AsInteger);
+
+                ActiveCtgy:= TCategory.Create;
+                ActiveCtgy.CtgyID:= Fields[1].AsInteger;
+                ActiveCtgy.CtgyName:= Fields[0].AsString;
+                ActiveCtgy.InvoiceLink:= Fields[3].AsInteger = 1;
+
+                stlGV_ActiveCtgy.AddObject(Fields[0].AsString,ActiveCtgy);
+
+              end;
+            Next;
+          end;
+      finally
+        Active:= false;
+      end;
+     lbCategory.SelectedItemIndex:= 0;
+ end;
+
+
+procedure TfrmCustomerLog.GetDepartmentList;
+
+begin
+    With dmMT2.fqSelect do
+      try
+        Active:= false;
+        SQL.Text:= UseDB;
+        SQL.Add('SELECT department, departmentid,ContactEMail from dbo.tblDepartments');
+        SQL.Add('ORDER BY department');
+        Active:= true;
+        stlGV_CLDept.Clear;
+        stlGV_DeptEMail.Clear;
+
+        while not EOF do
+          begin
+            stlGV_CLDept.AddObject(Fields[0].AsString,TOBject(Fields[1].AsINteger));
+            stlGV_DeptEMail.Add(Fields[0].AsString + '=' + Fields[2].AsString);
+            Next;
+          end;
+      finally
+        Active:= false;
+      end;
+
+ end;
+
+procedure TfrmCustomerLog.GetLogStatusCount(MemberNbr: string);
+var
+  aTicketCount : Array[0..4] of integer;
+  iLoop : integer;
+  iTotal : integer;
+  sWhere : String;
+begin
+    for iLoop:= 0 to 5 do
+        aTicketCount[iLoop]:= 0;
+    sWhere:= '';
+    With dmMT2.fqTicketCountByCustomer do
+       try
+         Active:= false;
+         if MemberNbr = '' then
+           begin
+             sWhere:= SQL[5];
+             SQL[5]:= '';
+           end
+         else
+            Params[0].AsString:= MemberNbr;
+         Active:= true;
+         while not EOF do
+            begin
+              if Fields[0].AsInteger IN [0,1,2,3,4] then
+                   aTicketCount[Fields[0].AsInteger]:= Fields[1].AsInteger;
+              Next;
+            end;
+
+       finally
+        begin
+         Active:= false;
+         if sWhere <> '' then
+           SQL[5]:= sWhere;
+        end;
+       end;
+     iTotal:= 0;
+     for iLoop:= 0 to 5 do
+       iTotal:= iTotal + aTicketCount[iLoop];
+
+     //show the fixed statuses
+     WIth lbStatusesFilter do
+        begin
+
+           ITems.Clear;
+           Items.AddObject('All' + #9 + IntToStr(iTotal),TObject(0));
+           Items.AddObject('New' + #9 + IntTOStr(aTicketCount[0]),TObject(0));
+           Items.AddObject('In Progress' + #9 + IntToStr(aTicketCount[1]),TObject(1));
+           Items.AddObject('On Hold'+ #9 + IntToStr(aTicketCount[2]) ,TObject(2));
+           Items.AddObject('Waiting for Client'+ #9 + IntToStr(aTicketCount[3]) ,TObject(3));
+           Items.AddObject('Complete' + #9 + IntToStr(aTicketCount[4]),TObject(4));
+
+        end;
+
+
+end;
+
+procedure TfrmCustomerLog.GetCallerListByClinic(MemberNbr : String);
+var
+  sCaller : String;
+begin
+     //get a list of unique callers
+       With dmMT2.fqCallerList do
+         try
+           Active:= false;
+           ParamByName('cid1').AsString:= vCL_SelectedMember.Nbr;
+           Active:= true;
+           while not EOF do
+             begin
+               sCaller:= TRIM(Fields[0].AsString);
+               if (sCaller <> '') and (stlGV_Callers.IndexOf(sCaller) = -1) then
+                   stlGV_Callers.Add(sCaller);
+               Next;
+             end;
+         finally
+
+         end;
+end;
+
+procedure TfrmCustomerLog.ListStatuses;
+begin
+       //show the fixed statuses
+     WIth lbStatusesFilter do
+        begin
+           ITems.Clear;
+           Items.AddObject('All',TObject(0));
+           Items.AddObject('New',TObject(0));
+           Items.AddObject('In Progress',TObject(1));
+           Items.AddObject('On Hold',TObject(2));
+           Items.AddObject('Waiting for Client',TObject(3));
+           Items.AddObject('Complete',TObject(4));
+
+        end;
+
+
+     ShowScrollBar(lbStatusesFilter.Handle, SB_VERT, false);
+end;
+
+function TfrmCustomerLog.IsMemberOfMTAdminGroup : boolean;
+
+begin
+
+    Result:= (POS('MTAdmin',vCL_ADSIUser.groups) > 0)or (POS('Domain Admin',vCL_ADSIUser.groups) > 0);
+
+end;
+
+procedure TfrmCustomerLog.GetEmailGroup;
+begin
+    //do some stuff here
+end;
+
+procedure TfrmCustomerLog.CheckForNewTickets;
+var
+  stlDistMembers : TStringList;
+  sGroup : String;
+  iDx : integer;
+  rTest : TMTNotification;
+  sGroupFullName : String;
+begin
+      lstGV_UnAckList.Clear;
+      stlDistMembers:= TStringList.Create;
+      dmMT2.fqNotifications.Active:= true;
+      try
+      while not dmMT2.fqNotifications.EOF do
+
+        begin
+           sGroup:= dmMT2.fqNotifications.Fields[2].AsString;
+           sGroup:= ExtractRecipNameFromEMailAddress(sGroup);
+           sGroupFullName:= dmMT2.GetDistNameCNFromMailNickName(sGroup);
+
+           dmMT2.GetDistGroupMemberList(sGroupFullName,stlDistMembers);
+           if stlDistMembers.IndexOf(rGV_MTUser.UserName) > -1 then
+               begin
+                 rTest:= TMTNotification.Create;
+                 lstGV_UnAckList.Add(rTest);
+                 rTest.LogID:= dmMT2.fqNotifications.Fields[0].AsInteger;
+                 rTest.SentOn:= dmMT2.fqNotifications.Fields[1].AsDateTime;
+                 rTest.SentTo:= dmMT2.fqNotifications.Fields[2].AsString;
+
+               end;
+
+
+          dmMT2.fqNotifications.Next;
+        end;
+      finally
+          dmMT2.fqNotifications.Active:= false;
+      end;
+      btnMTAlert.Visible:=  lstGV_UnAckList.Count > 0;
+end;
+
+
+procedure TfrmCustomerLog.CheckForWatches;
+var
+  dsWatch : TDataSet;
+begin
+        dsWatch:= dmMT2.OpenWatchListQuery;
+        if not btnMTAlert.Visible then
+            btnMTAlert.Visible:=  dsWatch.RecordCount > 0;
+end;
+
+
+procedure TfrmCustomerLog.StartUpTasks;
+begin
+    CheckForNewTickets;
+    CheckForWatches;
+end;
+
+procedure TfrmCustomerLog.DisplayAllLogs;
+begin
+
+        lblClient.HTMLText.Text:= '<FONT face="segoe ui" size="14" color="clWhite">All Clients</font>';
+        GetOpenTicketCount;
+
+        GetAllOpenLogs;
+        //GetCallerListByClinic(vCL_SelectedMember.Nbr);
+        dtGV_LastUpdateCheck:= Now;
+
+end;
+
+procedure TfrmCustomerLog.GetAllOpenLogs;
+var
+  x, y : integer;
+  sCaller : String;
+  vLog : TLogSummary;
+  LogPanel : TADVSmoothListBoxItem;
+  sSummary : String;
+  iStatusParam : integer;
+  sSumStatus : String;
+
+
+procedure SetQuery;
+begin
+
+     With dmMT2.fqLogs do
+        begin
+          SQL.Text:= UseDB;
+          SQL.Add('SELECT a.logid,a.caller,a.logdate,a.summary,');
+          SQL.Add('c.category,d.Department,a.assignedto,a.status,a.priority,a.duedate');
+          SQL.Add(',e.custname,e.custnmbr');
+          SQL.Add(' FROM dbo.tblCustomerLogInfo a');
+          SQL.Add('LEFT OUTER JOIN dbo.tblLogCategories c ON (a.ctgyid = c.categoryid)');
+          SQL.Add('LEFT OUTER JOIN dbo.tblDepartments d ON(a.deptid = d.DepartmentID)');
+          SQL.Add('LEFT OUTER JOIN [WDDC].dbo.RM00101 e ON (a.customerid = e.custnmbr AND e.ADRSCODE = ' + QuotedStr('MAIN') + ')') ;
+          SQL.Add('WHERE a.status < 4');
+          if lbCategory.SelectedItemIndex > 0 then
+                 begin
+
+                   SQL.Add(' AND a.ctgyid = :ctgy');
+                   ParamByName('ctgy').AsInteger:= Integer(lbCategory.Items[lbCategory.selecteditemindex].ItemObject);
+                 end;
+          if lbStatusesFilter.ItemIndex > 0 then
+                 begin
+
+                    SQL.Add(' AND a.status = :stas');
+                    iStatusParam:= Integer(lbStatusesFilter.Items.Objects[lbStatusesFilter.ItemIndex]);
+                    ParamByName('stas').AsInteger:= iStatusParam;
+                 end;
+
+               SQL.Add('ORDER BY a.logdate DESC');
+            end;
+
+end;
+begin
+    ///get the log for the customer
+    ///
+    ///
+
+    With tlLogs do
+      try
+        bCL_Clear:= false;
+        bCL_UpdateLog:= True;
+        BeginUpdate;
+
+        Tiles.Clear;
+        lblSummary.HTMLText.Text:= '';
+        x:= 1;
+        With dmMT2.fqLogs do
+           try
+             Active:= false;
+             SetQuery;
+             DisableControls;
+             Active:= true;
+             if (lbStatusesFilter.Count > 0) and (lbStatusesFilter.ItemIndex = -1) then
+                lbStatusesFilter.ItemIndex:= 0;
+             sSumStatus:= lbStatusesFilter.Items[lbStatusesFilter.ItemIndex];
+             sSumStatus:= GetCharsBeforeTab(sSumStatus);
+
+             If Uppercase(sSumStatus) = 'ALL' then //this would be all tickets
+                sSumStatus:= 'Open';
+
+
+
+
+             sSummary:= 'All ' + sSumStatus +  ' Tickets';
+             if lbCategory.SelectedItemIndex > 0 then
+                sSummary:= sSummary + ' tagged as ' + lbCategory.Items[lbCategory.SelectedItemIndex].Caption;
+
+             lblSummary.HTMLText.Text:= '<font face="Segoe ui" size="14" color="clGray">' + sSummary + '</font><ind x="600">' +  IntToStr(RecordCount) + ' records found';
+
+             while not EOF do
+               begin
+
+
+                 vLog:= TLogSummary.Create;
+                 vLog.LogID:= Fields[0].AsInteger;
+                 vLog.LogDate:=Fields[2].AsDateTime;
+                 vLog.CategoryName:= Fields[4].AsString;
+                 vLog.MemberName:= Fields[10].AsString;
+                 vLog.MemberNbr:= Fields[11].AsString;
+                 vLog.Summary:= Fields[3].AsString;
+                 vLog.Caller:= Fields[1].AsString;
+                 vLog.AssignedToName:= Fields[6].AsString;
+                 vLog.StatusID:= Fields[7].AsINteger;
+                 vLog.DeptName:= Fields[5].AsString;
+                 vLog.PriorityID:= Fields[8].AsInteger;
+                 vLog.DueDate:= Fields[9].AsDateTime;
+
+                 FillLogPanelDisplay(vLog);
+                 Next;
+                 Inc(x);
+               end;
+           finally
+            begin
+              EnableControls;
+              Active:= false;
+            end;
+           end;
+      finally
+       begin
+         EndUpdate;
+        // AutoSizeRows(false,3);
+        bCL_UpdateLog:= false;
+       end;
+      end;
+
+
+
+end;
+
+procedure TfrmCustomerLOg.GetOpenTicketCount;
+var
+   dsTicketCount : TDataSet;
+   iTotalOpen : integer;
+
+begin
+
+           dsTicketCount:= dmMT2.GetTotalOpenTicketCount;
+           iTotalOpen:= 0;
+           lbStatusesFilter.Clear;
+
+           if Assigned(dsTicketCount) then
                try
-                    Caption:= 'Update Existing Log.';
-                    btnCreateNewLog.Caption:= 'Update Log Now';
-                    iRow:= sgLogs.Row;
-                    cbCNL_Caller.Items.Assign(stlGV_Callers);
-                    cbCNL_Ctgy.Items.Assign(stlGV_CLCtgy);
-                    cbCNL_AssignedTo.Items.Assign(stlGV_Dept);
-                    cbLogSummary.Items.Assign(stlGV_Log_Summary_List);
-                    //display the previous selections
-                    vLog:= TLogSummary(sgLogs.Objects[0,iRow]);
-                    cbCNL_Caller.Text:= vLog.Caller;
-                    cbCNL_Ctgy.ItemIndex:= cbCNL_Ctgy.Items.IndexOf(vLog.CategoryName);
-                    cbCNL_AssignedTo.ItemIndex:= cbCNL_AssignedTo.Items.IndexOf(vLog.AssignedToName);
-                    cbLogSummary.Text:= vLog.Summary;
-                    eJIRA.Text:= vLog.JIRAID;
+                  while not dsTicketCount.Eof do
+                      begin
+                       WIth lbStatusesFilter do
+                           begin
+                             Items.AddObject(dsTicketCount.Fields[0].AsString + #9 + dsTicketCount.Fields[1].AsString,TObject(dsTicketCount.Fields[2].AsInteger));
+                             iTotalOpen:= iTotalOpen + dsTicketCount.Fields[1].AsInteger;
 
-                    ShowModal;
-                    bModalResult:= ModalResult = mrOK;
-                    if bModalResult then
-                         begin
+                           end;
+                         dsTicketCount.Next;
+                       end;
+                  //insert the total
+                  lbStatusesFilter.Items.InsertObject(0,'All' + #9 + IntToStr(iTotalOpen),TObject(0));
 
-                            //now save this as a new blank log
-                            vLog.Caller:= cbCNL_Caller.Text;
-                            vLog.CategoryName:= cbCNL_Ctgy.Text;
-                            try
-                            vLog.CategoryID:= Integer(cbCNL_Ctgy.Items.Objects[cbCNL_Ctgy.ItemIndex]);
-                            except on Exception do
-                              vLog.CategoryID:= -1;
-                            end;
-                            vLog.JIRAID:= eJira.Text;
-                            vLog.AssignedToName:= cbCNL_AssignedTo.Text;
-                            try
-                               vLog.AssignedToID:= Integer(cbCNL_AssignedTo.Items.Objects[cbCNL_AssignedTo.ItemIndex]);
-                            except on E: Exception do
-                               vLog.AssignedToID:= -1;
-
-                            end;
-                            vLog.Summary:= cbLogSummary.Text;
-                            vLog.JIRAID:= eJIRA.Text;
-                            sGV_Log_Summary:= cbLogSummary.Text;
-                            CreateOrUpdateLogSummaryInDB(vLog);
-                            ShowLogHEader(vLog);
-                            UpdateRowInLogGrid(iRow);
-                            iCL_LogID:= vLog.LogID;
-                            bCL_EditLog:= true;
-
-                            if stlGv_Log_Summary_List.IndexOf(cbLogSummary.Text) = -1 then
-                               begin
-                                 stlGV_Log_Summary_List.Add(cbLogSummary.Text);
-                                 stlGV_Log_Summary_List.SaveToFile(ExtractFilePath(ParamStr(0)) + cnstSummaryFile);
-                               end;
-
-
-                         end;
 
                finally
-                     Free;
+                 dsTicketCount.Active:= false;
                end;
 end;
 
-procedure TfrmCustomerLog.ClearLogSummaryGrid;
-var
-  x, y  : integer;
+procedure TfrmCustomerLog.FilterLogs(LogID : integer);
 begin
-
-      With sgLogs do
-        begin
-          for y:= 1 to Pred(RowCOunt) do
-             if Assigned(Objects[0,y]) then
-                 try
-                   TLogSummary(Objects[0,y]).Free;
-                   Objects[0,y]:= nil;
-                 except
-
-                 end;
-
-
-          for x:= 0 to Pred(ColCount) do
-            for y:= 1 to Pred(RowCount) do
-             Cells[x,y]:= '';
-          RowCount:= 2;
-        end;
+    if vCL_SelectedMember.Nbr = ''  then
+       GetAllOpenLogs
+    else
+       GetLogs(LogID);
 end;
 
-procedure TfrmCustomerLog.ClearSummaryHeader;
+function TfrmCustomerLog.GetSearchStatus : smallInt;
 begin
-     lblCategory.Caption:= '';
-     lblJIRALink.HTMLText.Text:= '';
-     lblCaller.Caption:= '';
-     lblAssignedTo.Caption:= '';
-     lblSummary.Caption:= '';
-     lblLogDate.Caption:= '';
+     if vCL_SelectedMember.Nbr = '' then
+        Result:= 0
+     else
+        Result:= 1;
 end;
-
-procedure TfrmCustomerLog.ShowLogHeader(LogSummaryIn: TLogSummary);
-begin
-       lblLogId.Caption:= IntToStr(LogSummaryIn.LogID) ;
-       lblLogDate.Caption:= FormatDateTime('mmm dd yyyy h:nn AM/PM',LogSummaryIn.LogDate);
-       lblSummary.Caption:= LogSummaryIn.Summary;
-       lblCategory.Caption:= LogSummaryIn.CategoryName;
-       lblAssignedTo.Caption:= LogSummaryIn.AssignedToName;
-       lblJIRALink.HTMLText.Text:= '<A HREF="' + cstApollo +  LogSummaryIn.JIRAID + '">'+ LogSummaryIn.JIRAID + '</A>' ;
-       lblCaller.Caption:= LogSummaryIn.Caller;
-end;
-
-procedure TfrmCustomerLog.OpenImageForm(Sender: TObject);
-var
-  sFileName : String;
-  sPath : string;
-begin
-    With TfrmImages.Create(nil) do
-       try
-         ShowModal;
-         if ModalResult = mrOK  then
-           begin
-              sFileName:= AddImageToLog(iCL_LogID,eImageTitle.Text,eImageNotes.Text);
-              if sFileName <> '' then
-                begin
-                  sPath:= cstImageStorageURL + IntToStr(iCL_LogID);
-                  if not DirectoryExists(sPath) then
-                     ForceDirectories(sPath);
-                  imgImport.Picture.Bitmap.SaveToFile(IncludeTrailingPathDelimiter(cstImageStorageURL + IntToStr(iCL_LogID)) + sFileName + '.bmp');
-                end;
-
-           end;
-       finally
-         Free;
-       end;
-end;
-
-function TfrmCustomerLog.AddImageToLog(LogID : integer; LogTitle,LogName : String) : String;
-var
-   sNewFileName : String;
-   iUID : TGUID;
-begin
-      CreateGUID(iUID);
-      sNewFileName:= GUIDToString(iUID);
-      With dmMT2.qMT_Exec do
-         try
-           SQL.Text:= 'USE MT2';
-           SQL.Add('INSERT INTO tblImages (LogID,ImageTitle,ImageNotes,ImageFileName) VALUES (:lgid,:titl,:nots,:fnam)');
-           ParamByName('lgid').AsInteger:= LogID;
-           ParamByName('titl').AsString:= LogTitle;
-           ParamByName('nots').AsString:= LogName;
-           ParamByName('fnam').AsString:= sNewFileName + '.bmp';
-           ExecSQL;
-           Result:= sNewFileName;
-
-
-
-         except
-            Result:= '';
-
-         end;
-end;
-
-function TfrmCustomerLog.ListImagesForLog(LogID: Integer) : boolean;
-begin
-       Result:= false;
-       stlGV_LogImageList.Clear;
-       With dmMT2.qMT_Select do
-         try
-           Active:= false;
-           SQL.Text:= 'USE MT2';
-           SQL.Add('Select ImageFileName FROM tblImages WHERE logid = :lgid');
-           ParamByName('lgid').AsInteger:= LogID;
-           Active:= true;
-           Result:= RecordCOunt > 0;
-           if result  then
-            while not EOF do
-              begin
-                  stlGV_LogImageList.Add(IncludeTrailingPathDelimiter(cstImageStorageURL + IntToStr(LogID))  + Fields[0].AsString);
-                  Next;
-              end;
-
-         finally
-            Active:= false;
-         end;
-
-end;
-
-procedure TfrmCustomerLog.ShowImageListForm(LogID: Integer);
-begin
-    With TfrmImageList.Create(nil) do
-      try
-        iIL_LogID:= LogID;
-        ShowModal
-      finally
-        Free;
-      end;
-end;
-
-
-
 
 end.

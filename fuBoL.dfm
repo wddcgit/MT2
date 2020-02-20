@@ -144,12 +144,13 @@ object frmBOL: TfrmBOL
     SearchFooter.HintFindPrev = 'Find previous occurrence'
     SearchFooter.HintHighlight = 'Highlight occurrences'
     SearchFooter.MatchCaseCaption = 'Match case'
+    SearchFooter.ResultFormat = '(%d of %d)'
     SortSettings.DefaultFormat = ssAutomatic
     SortSettings.HeaderColor = 16579058
     SortSettings.HeaderColorTo = 16579058
     SortSettings.HeaderMirrorColor = 16380385
     SortSettings.HeaderMirrorColorTo = 16182488
-    Version = '7.8.0.1'
+    Version = '8.4.8.5'
     ExplicitTop = 55
     ExplicitWidth = 648
     ColWidths = (
@@ -158,6 +159,17 @@ object frmBOL: TfrmBOL
       115
       104
       64)
+    RowHeights = (
+      22
+      22
+      22
+      22
+      22
+      22
+      22
+      22
+      22
+      22)
   end
   object lbBoL: TListBox
     AlignWithMargins = True
@@ -171,7 +183,6 @@ object frmBOL: TfrmBOL
     ItemHeight = 13
     TabOrder = 1
     OnKeyDown = lbBoLKeyDown
-    ExplicitLeft = 688
   end
   object AdvGlowButton1: TAdvGlowButton
     Left = 626

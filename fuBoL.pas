@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, AdvGlowButton;
+  BaseGrid, AdvGrid, AdvGlowButton, AdvUtil;
 
 type
   TfrmBOL = class(TForm)
@@ -31,7 +31,7 @@ implementation
 
 {$R *.dfm}
 
-uses duMT2, fuMT2Main;
+uses duMT2;
 
 procedure TfrmBOL.FormShow(Sender: TObject);
 begin
@@ -54,7 +54,7 @@ begin
        try
          BeginUpdate;
          iRow:= 1;
-         With dmMT2.qDB_TrackingNum do
+         With dmMT2.fqDB_TrackingNbr do
             try
               Active:= false;
               ParamBYName('cnbr').AsString:= sBL_MemberNbr + '%';
@@ -101,4 +101,4 @@ end;
 
 end.
 
-end.
+

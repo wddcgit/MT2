@@ -2,7 +2,7 @@ unit uMT2Classes;
 
 interface
 
-uses   Classes;
+uses   Classes, Generics.Collections;
 
 type TLogPage = Class(TObject)
        LogID : integer;
@@ -40,10 +40,85 @@ type TLogSummary = Class(TObject)
         AssignedToName : String;
         CategoryID : integer;
         CategoryName : String;
-        Status : shortint;
-        JIRAID : String;
+        MemberNbr : String;
+        MemberName : String;
+        DeptName  : String;
+        DeptID    : integer;
+        PriorityID : integer;
+        PriorityName : String;
+        StatusID : integer;
+        StatusName : String;
+        DueDate  : TDateTime;
+        Watched : boolean;
         constructor Create;
 End;
+
+type TMember = record
+      Nbr : string;
+      Name : String;
+      Address1: String;
+      Address2 : String;
+      City : String;
+      PostalCode : String;
+      Prov  : String;
+      email : String;
+      Phone : String;
+      Fax : String;
+      WDDCRep : String;
+      SiteID : integer;
+End;
+
+type  TAttachment = Class(TObject)
+         LogID : integer;
+         ProblemID : integer;
+         PathAndFileName : String;
+         Title  : String;
+End;
+
+type TMTUser = record
+      UserName : String;
+      FullName : String;
+      EMail    : String;
+      SecurityGroup : String;
+      EMailGroup : String;
+      Dept : String;
+end;
+
+type TMTNotification = Class(TObject)
+        LogID : integer;
+        SentOn : TDateTime;
+        SentTo : String;
+
+end;
+
+type TItem = Class(TObject)
+       ItemID : String;
+       ItemDesc : String;
+       ItemQty : integer;
+       LotNbr  : String;
+       ExpyDate : String;
+       SOPNumbe : String;
+       LineNbr  : String;
+       procedure CopyFromSourceToDest(Source, Dest : TItem);
+end;
+
+
+type TCategory = Class(TObject)
+      CtgyID : integer;
+      CtgyName : String;
+      Inactive : boolean;
+      InvoiceLink : boolean;
+End;
+
+type TLogStatus = (lsNew,lsInProgress,lsOnHold,lsWaitingOnClient,lsDone);
+
+type TAttachments = Class(TObjectList<TAttachment>);
+
+type TCategories = Class(TObjectList<TCategory>) ;
+
+type TStringEntryType = (seNewCtgy,seEditCtgy);
+
+
 
 implementation
 
@@ -66,6 +141,17 @@ constructor TLogSummary.Create;
 begin
      inherited Create;
      LogID:= 0;
+end;
+
+procedure TItem.CopyFromSourceToDest(Source: TItem; Dest: TItem);
+begin
+     Dest.ItemID:= Source.ItemID;
+     Dest.ItemDesc:= Source.ItemDesc;
+     Dest.ItemQty:= Source.ItemQty;
+     Dest.LotNbr:= Source.LotNbr;
+     Dest.ExpyDate:= Source.ExpyDate;
+     Dest.SOPNumbe:= Source.SOPNumbe;
+     Dest.LineNbr:= Source.LineNbr;
 end;
 
 end.

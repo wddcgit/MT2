@@ -47,7 +47,22 @@ object frmImageList: TfrmImageList
     DescriptionFill.Rounding = 0
     DescriptionFill.ShadowOffset = 0
     DescriptionFill.Glow = gmNone
-    Items = <>
+    Items = <
+      item
+        Tag = 0
+        Text = 'Slide Show Item'
+        DescriptionFont.Charset = DEFAULT_CHARSET
+        DescriptionFont.Color = clWindowText
+        DescriptionFont.Height = -11
+        DescriptionFont.Name = 'Tahoma'
+        DescriptionFont.Style = []
+        TextFont.Charset = DEFAULT_CHARSET
+        TextFont.Color = clWindowText
+        TextFont.Height = -11
+        TextFont.Name = 'Tahoma'
+        TextFont.Style = []
+        WordWrap = False
+      end>
     Margin.Left = 10
     Margin.Top = 10
     Margin.Right = 10
@@ -73,13 +88,10 @@ object frmImageList: TfrmImageList
     ThumbNailSelectedFill.Rounding = 0
     ThumbNailSelectedFill.ShadowOffset = 0
     ThumbNailSelectedFill.Glow = gmNone
-    Version = '1.4.2.1'
+    Version = '1.4.3.0'
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 144
-    ExplicitTop = 160
-    ExplicitWidth = 500
-    ExplicitHeight = 400
+    OnKeyDown = cmpImageListKeyDown
     TMSStyle = 0
   end
 end

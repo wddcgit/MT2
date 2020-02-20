@@ -92,7 +92,7 @@ object frmImages: TfrmImages
       Visible = True
       Version = '3.4.6.6'
     end
-    object AdvGlowButton1: TAdvGlowButton
+    object btnSelectImage: TAdvGlowButton
       Left = 559
       Top = 71
       Width = 100
@@ -104,7 +104,7 @@ object frmImages: TfrmImages
       NotesFont.Name = 'Tahoma'
       NotesFont.Style = []
       TabOrder = 2
-      OnClick = AdvGlowButton1Click
+      OnClick = btnSelectImageClick
       Appearance.ColorChecked = 16111818
       Appearance.ColorCheckedTo = 16367008
       Appearance.ColorDisabled = 15921906
@@ -122,7 +122,7 @@ object frmImages: TfrmImages
       Appearance.ColorMirrorDisabled = 11974326
       Appearance.ColorMirrorDisabledTo = 15921906
     end
-    object AdvGlowButton2: TAdvGlowButton
+    object btnClear: TAdvGlowButton
       Left = 712
       Top = 70
       Width = 63
@@ -134,7 +134,7 @@ object frmImages: TfrmImages
       NotesFont.Name = 'Tahoma'
       NotesFont.Style = []
       TabOrder = 3
-      OnClick = AdvGlowButton2Click
+      OnClick = btnClearClick
       Appearance.ColorChecked = 16111818
       Appearance.ColorCheckedTo = 16367008
       Appearance.ColorDisabled = 15921906
@@ -208,10 +208,6 @@ object frmImages: TfrmImages
     Columns = <>
     TabOrder = 1
     OnKeyDown = lvImageKeyDown
-    ExplicitLeft = 128
-    ExplicitTop = 152
-    ExplicitWidth = 250
-    ExplicitHeight = 150
   end
   object lblHowToAddImage: THTMLStaticText
     Left = 256
